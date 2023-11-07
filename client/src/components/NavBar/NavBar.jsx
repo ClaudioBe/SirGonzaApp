@@ -16,7 +16,7 @@ const NavBar=()=>{
                 <p>Sacar Turno</p>
             </Link>
             <Link to='/IniciarSesion'>
-                <p>Iniciar Sesión</p>
+                <p>SirGonza</p>
             </Link>
         </div>
     )

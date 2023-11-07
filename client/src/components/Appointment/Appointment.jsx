@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { postAppointments,getAllAppointments } from "../../redux/actions";
 import {useDispatch} from 'react-redux';
+import styles from './Appointment.module.css';
 
 const Appointment=()=>{
     const[input,setInput]=useState({
@@ -24,34 +25,46 @@ const Appointment=()=>{
     }
 
     return(
-        <>
-            <form onSubmit={handleSubmit}>
-                <label>Nombre: </label>
-                <input 
-                    type="text" 
-                    name="name"
-                    onChange={handleChange}
-                />
-                <label>Apellido: </label>
-                <input 
-                    type="text" 
-                    name="lastname"
-                    onChange={handleChange}
-                />
-                <label>Fecha: </label>
-                <input 
-                    type="date"   
-                    name="date"
-                    onChange={handleChange}
-                />
-                <input 
-                    type="time"
-                    name="time"
-                    onChange={handleChange}
-                />
-                <button type="submit">Solicitar</button>
-            </form>  
-        </>
+            <form onSubmit={handleSubmit} className={styles.form} >
+                <div className={styles.inputs}>
+                    <div className={styles.input}>
+                        <label>Nombre: </label>
+                        <input 
+                            type="text" 
+                            name="name"
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className={styles.input}>
+                        <label>Apellido: </label>
+                        <input 
+                            type="text" 
+                            name="lastname"
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className={styles.input}>
+                        <label>Fecha: </label>
+                        <input 
+                            className={styles.date}
+                            type="date"   
+                            name="date"
+                            
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className={styles.input}>
+                        <label>Horario: </label>
+                        <input
+                            className={styles.date} 
+                            type="time"
+                            name="time"
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <input type="submit" value="Solicitar" className={styles.button}/>
+                </div>
+            </form> 
     )
 }
 

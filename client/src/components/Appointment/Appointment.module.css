@@ -1,0 +1,25 @@
+.form{
+    background-color: darkblue;
+    border-radius: 15px;
+    margin: auto;
+    width: 90%;
+    max-width: 400px;
+    padding: 50px 30px;
+    text-align: center;
+}
+.inputs{
+    display: grid;
+    gap: 40px
+}
+.input{
+    position: relative;
+}
+.date{
+    cursor: pointer;
+}
+
+.button{
+    cursor: pointer;
+}
+ 
+

@@ -1,3 +1,10 @@
 .container{
-    display: flex
+    background-color: darkblue;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    border-radius: 15px;
+    text-align: center;
 }
