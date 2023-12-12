@@ -1,5 +1,17 @@
-.container{
-    background-color: darkblue;
+/* --storm-dust-50: #f6f6f6;
+--storm-dust-100: #e7e7e7;
+--storm-dust-200: #d1d1d1;
+--storm-dust-300: #b0b0b0;
+--storm-dust-400: #888888;
+--storm-dust-500: #666666;
+--storm-dust-600: #5d5d5d;
+--storm-dust-700: #4f4f4f;
+--storm-dust-800: #454545;
+--storm-dust-900: #3d3d3d;
+--storm-dust-950: #262626;
+ */
+.form{
+    background-color: #5d5d5d;
     width: 90%;
     max-width: 400px;
     display: flex;
@@ -7,4 +19,26 @@
     margin: auto;
     border-radius: 15px;
     text-align: center;
+    padding: 30px;
+}
+.button{
+    color:#262626;
+    font-size: 15px;
+    background-color:#b0b0b0;
+    cursor: pointer;
+    border: 0;
+    border-radius: 2px;
+    padding: 10px 20px;
+    transition-duration: padding border 0,5s ;
+}
+
+.button:hover{
+    background-color:#3d3d3d;
+    color:#b0b0b0;
+}
+
+.button:active{
+    border: 2px solid black;
+    padding:8px 18px;
+    
 }

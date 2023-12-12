@@ -1,12 +1,25 @@
+/* --storm-dust-50: #f6f6f6;
+--storm-dust-100: #e7e7e7;
+--storm-dust-200: #d1d1d1;
+--storm-dust-300: #b0b0b0;
+--storm-dust-400: #888888;
+--storm-dust-500: #666666;
+--storm-dust-600: #5d5d5d;
+--storm-dust-700: #4f4f4f;
+--storm-dust-800: #454545;
+--storm-dust-900: #3d3d3d;
+--storm-dust-950: #262626;
+ */
 .container{
     display: flex;
     justify-content:space-around;   
 }
 .container a{
+    color: #b0b0b0;
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.5s ease;
 }
 a:hover{
-    border-bottom: 1px solid lightblue;
+    border-bottom: 1px solid #b0b0b0;
 }

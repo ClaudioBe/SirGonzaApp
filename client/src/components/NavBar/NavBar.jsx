@@ -9,9 +9,6 @@ const NavBar=()=>{
             <Link to='/'>
                 <p>Inicio</p>
             </Link>
-            <Link to='/Cortes'>
-                <p>Cortes</p>
-            </Link>
             <Link to='/Turnos'>
                 <p>Sacar Turno</p>
             </Link>

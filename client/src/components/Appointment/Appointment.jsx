@@ -1,27 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { postAppointments,getAllAppointments } from "../../redux/actions";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import styles from './Appointment.module.css';
+import swal from "sweetalert2";
 
 const Appointment=()=>{
+    //instancio un objeto de tipo Date
+    const today=new Date();
+    const minDate=today.toISOString().split('T')[0];
+    today.setMonth(today.getMonth()+1)
+    const maxDate=today.toISOString().split('T')[0];
+
+    const dispatch=useDispatch();
+
     const[input,setInput]=useState({
         time:"",
         date:"",
         name:"",
         lastname:""
     });
-
-    const dispatch=useDispatch();
+    
 
     const handleChange=(e)=>{
         setInput({...input,[e.target.name]:e.target.value})
-        console.log(e.target.value);
     }
 
     const handleSubmit=(e)=>{
         e.preventDefault();
         dispatch(postAppointments(input))
-        alert("La solicitud de turno fue enviada!")
+        //sweet alert que se muestra por 1s sin ocultando el boton de confirmación
+        swal.fire({
+            title:"Se ha enviado tu solicitud!",
+            icon: 'success',
+            timer:2000,
+            showConfirmButton:false,
+            iconColor:'#888888'
+        })  
     }
 
     return(
@@ -49,7 +63,8 @@ const Appointment=()=>{
                             className={styles.date}
                             type="date"   
                             name="date"
-                            
+                            min={minDate}
+                            max={maxDate}
                             onChange={handleChange}
                         />
                     </div>
