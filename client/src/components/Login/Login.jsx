@@ -1,26 +1,45 @@
 import React, { useState } from "react";
-import styles from "./Login.module.css";
+import {useDispatch, useSelector} from 'react-redux';
+import {logIn} from '../../redux/actions/userActions';
+import styles from "./LogIn.module.css";
+import swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
-const Login=()=>{
-    const[input,setInput]=useState('');
-
+const LogIn=()=>{
+    const[input,setInput]=useState({password:""});
+    
+    const dispatch=useDispatch();
+    const navigate=useNavigate();
     const handleChange=(e)=>{
-        setInput(...input,e.target.value)
+        setInput({password:e.target.value});
     }
-    const handleSubmit=(e)=>{
+    
+    const handleSubmit=async(e)=>{
         e.preventDefault();
-        //despachar action para iniciar sesion  
-    }
+        //despacho la action para iniciar sesion  
+        //uso await para que termine antes de verificar el localStorage
+        await dispatch(logIn(input));
+    
+        !JSON.parse(localStorage.getItem("isLogged"))
+            ?swal.fire({
+                title:"Contraseña incorrecta",
+                icon:'error',
+                timer:2000,
+                showConfirmButton:false,
+                iconColor:'#888888'
+            })
+            : navigate("/Admin/Panel");
 
+    }
     return (
         <form className={styles.form} onSubmit={handleSubmit}>
             <h1 className={styles.title}>¿Gonza?</h1>
             <div className={styles.password}></div>
             <label>Contraseña: </label>
-            <input type="password" onChange={handleChange}/> 
+            <input type="password" onChange={handleChange}/>
             <button className={styles.button}>Entrar</button>   
         </form>
     )
 }
 
-export default Login;
+export default LogIn;

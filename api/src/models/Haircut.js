@@ -7,11 +7,11 @@ module.exports = (sequelize) => {
             autoIncrement:true,
             primaryKey:true
         },
-        image: {
-            type: DataTypes.JSON,
+        images: {
+            type: DataTypes.ARRAY(DataTypes.JSON),
             public_id: DataTypes.STRING,
             secure_url: DataTypes.STRING,
             allowNull: false,
-        },
+        }
     },{timestamps:false})
 }

@@ -1,0 +1,10 @@
+.actionsContainer{
+    display:flex;
+    flex-direction: row;
+    max-height: 50px;
+    align-items: center;
+    justify-content: space-between;
+}
+.tag{
+    cursor:pointer;
+}

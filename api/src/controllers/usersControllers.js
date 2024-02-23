@@ -1,11 +1,10 @@
 const {User}=require('../db');
 
-const login=async(password)=>{
+const logIn=async(password)=>{
     const user=await User.findOne({where:{password}})
-    if(user) return "OK";
-    throw Error("Contraseña Incorrecta");
+    return user?true:false;
 }
 
 module.exports={
-    login
+    logIn
 }

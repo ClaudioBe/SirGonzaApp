@@ -1,12 +1,8 @@
-const{HaircutTypes} =require('../db');
+const{HaircutType} =require('../db');
 
 
 const getAllTypes=async()=>{
-    return await HaircutTypes.findAll();
+    return await HaircutType.findAll();
 }
 
-const getTypeById=async(id)=>{
-    return await HaircutTypes.findByPk(id);
-}
-
-modules.exports={getAllTypes,getTypeById};
+module.exports={getAllTypes};

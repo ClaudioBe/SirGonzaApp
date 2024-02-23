@@ -1,25 +1,25 @@
-/* --storm-dust-50: #f6f6f6;
---storm-dust-100: #e7e7e7;
---storm-dust-200: #d1d1d1;
---storm-dust-300: #b0b0b0;
---storm-dust-400: #888888;
---storm-dust-500: #666666;
---storm-dust-600: #5d5d5d;
---storm-dust-700: #4f4f4f;
---storm-dust-800: #454545;
---storm-dust-900: #3d3d3d;
---storm-dust-950: #262626;
- */
 .container{
-    display: flex;
-    justify-content:space-around;   
+    display:flex;
+    justify-content: space-around;
+    margin-bottom: 2%;
 }
+
 .container a{
-    color: #b0b0b0;
+    color: green;
     text-decoration: none;
     border-bottom: 1px solid transparent;
-    transition: border-bottom 0.5s ease;
+    transition: border-bottom 1s ;
 }
-a:hover{
-    border-bottom: 1px solid #b0b0b0;
+
+a:not(.logo):hover{
+    border-bottom: 1px solid green;
 }
+
+/* .imgLogo{
+    transition:height margin-right 0.5s ease;
+}
+
+.imgLogo:hover{
+    height: 35px;
+    margin-right: -5px;
+} */

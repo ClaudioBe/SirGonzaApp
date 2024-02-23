@@ -1,16 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./Haircut.module.css";
-import { useDispatch, useSelector } from "react-redux";
-import { getHaircutTypeById } from "../../redux/actions";
 
-const Haircut=({TypeId,image})=>{
-    const dispatch=useDispatch();
-    useEffect(()=>{dispatch(getHaircutTypeById(TypeId))},[dispatch,TypeId]);
-    const type=useSelector(state=>state.haircutType);
+const Haircut=({type,images})=>{
+    const [currentIndex,setCurrentIndex]=useState(0);
+    const [selectedImage,setSelectedImage]=useState(images[0]);
+
+    const prev=()=>{
+        const next= currentIndex>0?currentIndex-1:currentIndex;
+        setCurrentIndex(next) 
+        setSelectedImage(images[next]);
+    }
+
+    const next=()=>{
+        const next=currentIndex<images.length-1?currentIndex+1:currentIndex;
+        setCurrentIndex(next);
+        setSelectedImage(images[next]);
+    }
+
     return (
         <div className={styles.container}>
-            <img src={image} alt=""/>
-            <p>Corte: {type.name}</p>
+            <button className={styles.leftArrow} onClick={prev}>{'<'}</button>
+            <button className={styles.rightArrow} onClick={next}>{'>'}</button>
+            <img className={styles.image} src={selectedImage} alt="" />
         </div>
     )
 }

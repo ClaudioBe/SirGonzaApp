@@ -1,4 +1,4 @@
-const {DataTypes, Sequelize, DATE, NOW}=require('sequelize');
+const {DataTypes, NOW}=require('sequelize');
 
 module.exports= (Sequelize)=>{
     Sequelize.define('appointment',{
@@ -18,9 +18,12 @@ module.exports= (Sequelize)=>{
         time:{
             type: DataTypes.TIME
         },
-        date:{
+        date_en:{
             type:DataTypes.DATEONLY,
             defaultValue:NOW
+        },
+        date_es:{
+            type:DataTypes.STRING,
         },
         confirmed:{
             type:DataTypes.BOOLEAN,
