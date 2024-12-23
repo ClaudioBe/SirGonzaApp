@@ -15,6 +15,9 @@ module.exports= (Sequelize)=>{
             type:DataTypes.STRING,
             allowNull:false
         },
+        phoneNumber:{
+            type:DataTypes.STRING
+        },
         time:{
             type: DataTypes.TIME
         },

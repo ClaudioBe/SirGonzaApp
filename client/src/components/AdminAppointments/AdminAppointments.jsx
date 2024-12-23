@@ -1,7 +1,7 @@
 import React, { useEffect ,useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {Menu, Table, Tag } from "antd";
-import { deleteAppointment, getAllAppointments, putAppointment } from "../../redux/actions/appointmentActions";
+import { deleteAppointment, getAllAppointments, putAppointment,sendMessage } from "../../redux/actions/appointmentActions";
 import Reschedule from "../Reschedule/Reschedule";
 import styles from './AdminAppointments.module.css';
 import CreateAppointment from "../CreateAppointment/CreateAppointment";
@@ -10,14 +10,16 @@ const AdminAppointments=()=>{
     const dispatch=useDispatch();
     const[appointmentChanged,setAppointmentChanged]=useState(false);
     const appointments=useSelector(state=>state.allAppointments);
+    const token=useSelector(state=>state.token);
     const Appointments=appointments.map(h=> ({...h,key:h.id}));
 
     useEffect(()=>{setAppointmentChanged(false)},[appointments,appointmentChanged])
     useEffect(()=>{dispatch(getAllAppointments())},[])
 
-    const handleAccept=(id)=>{
-        dispatch(putAppointment({confirmed:true},id))
+    const handleAccept=(id,phoneNumber,date_es,time)=>{
+        dispatch(putAppointment({confirmed:true},id,token))
         setAppointmentChanged(true);
+        sendMessage({phoneNumber,message:`Turno del ${date_es} a las ${time} aceptado!`})
     }
 
     const columns = [
@@ -44,19 +46,19 @@ const AdminAppointments=()=>{
             title:"Fecha",
             dataIndex:"date_es",
             key:"date_es",
-            render:(date_es)=><p>{date_es.substring(0,4)}</p>
+            render:(date_es)=><p>{date_es}</p>
         },
         {
             title:"Horario",
             dataIndex:"time",
             key:"time",
-            render:(time)=><p>{time.substring(0,5)}</p>
+            render:(time)=><p>{time}</p>
         },
         {
             title:"Acciones",
             dataIndex:"actions",
             key:"actions",
-            render:(_, {id,name,lastname,time,date,confirmed})=>
+            render:(_, {id,name,lastname,time,date_es,confirmed,phoneNumber})=>
                     <div className={styles.actionsContainer}>
                         {confirmed
                             ? <p>Aceptado!</p>   
@@ -68,13 +70,14 @@ const AdminAppointments=()=>{
                                             name={name}
                                             lastname={lastname}
                                             time={time}
-                                            date={date}
+                                            date_es={date_es}
+                                            phoneNumber={phoneNumber}
                                         />
                                     </Menu.SubMenu>
                                 </Menu>
-                                <Tag className={styles.tag}color='green' onClick={()=>handleAccept(id)}>Aceptar</Tag>
+                                <Tag className={styles.tag}color='green' onClick={()=>handleAccept(id,phoneNumber,date_es,time,token)}>Aceptar</Tag>
                             </div>}
-                            <Tag className={styles.tag}color='red' onClick={()=>dispatch(deleteAppointment(id))}>Eliminar</Tag>
+                            <Tag className={styles.tag}color='red' onClick={()=>dispatch(deleteAppointment(id,token))}>Eliminar</Tag>
                     </div>
                 
         }

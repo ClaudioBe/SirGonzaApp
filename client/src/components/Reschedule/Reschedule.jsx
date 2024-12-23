@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { putAppointment } from '../../redux/actions/appointmentActions';
 import swal from 'sweetalert2';
 import styles from './Reschedule.module.css';
 
 function Reschedule({id,name,lastname,time,date}) {
+    const token=useSelector(state=>state.token);
     //instancio un objeto de tipo Date
     const today=new Date(); 
     //cambio today a un formato mas simple y lo separo 
@@ -28,7 +29,7 @@ function Reschedule({id,name,lastname,time,date}) {
 
     const handleSubmit=(e)=>{
         e.preventDefault();
-        dispatch(putAppointment(input,id))
+        dispatch(putAppointment(input,id,token))
         //sweet alert que se muestra por 1s ocultando el boton de confirmación
         swal.fire({
             title:`Se ha enviado a ${name} ${lastname} el nuevo horario!`,

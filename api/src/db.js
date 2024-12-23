@@ -28,12 +28,6 @@ let entries = Object.entries(sequelize.models);
 let capsEntries = entries.map((entry) => [entry[0][0].toUpperCase() + entry[0].slice(1), entry[1]]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-// En sequelize.models están todos los modelos importados como propiedades
-const {HaircutType, Haircut}=sequelize.models;
-
-//Relacion uno a muchos, un tipo de corte puede tener muchos cortes.
-HaircutType.hasMany(Haircut);
-Haircut.belongsTo(HaircutType);
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');

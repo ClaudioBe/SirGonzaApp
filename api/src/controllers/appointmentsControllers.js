@@ -4,12 +4,40 @@ const getAppointments=async()=>{
     return await Appointment.findAll();
 }
 
-const postAppointment=async({name,lastname,time,date_en})=>{
-    const date= new Date(date_en);
-    //formateo la fecha a: dd/mm/aa
-    const date_es=format(new Date(date_en),'es');
+const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
+    const errors={}
+
+    if(name=="") errors.name="Debe ingresar su nombre";
+    else{
+        if(!regexLetters.test(name))errors.name="El nombre solo debe contener letras";
+        if(name.length<3)errors.name="Nombre demasiado corto";
+        if(name.length>15) errors.name="Nombre demasiado largo";
+    } 
     
-    const newAppointment=await Appointment.create({name,lastname,time,date_en,date_es});
+    if(lastname=="") errors.lastname="Debe ingresar su apellido";
+    else{
+        if(!regexLetters.test(lastname))errors.lastname="El apellido solo debe contener letras";
+        if(lastname.length<3)errors.lastname="Apellido demasiado corto";
+        if(lastname.length>15) errors.lastname="Apellido demasiado largo";
+    } 
+
+    if(phoneNumber=="") errors.phoneNumber="Debe ingresar su numero de celular";
+    else {
+        if(phoneNumber.length!=8) errors.phoneNumber="Debe ingresar 6 digitos";
+    }
+
+    if(time=="") errors.time="Debe elegir un horario";
+
+    if(date_en=="") errors.date="Debe elegir una fecha";
+
+    if(Object.keys(errors).length)throw Error(JSON.stringify(errors));
+    
+    //formateo la fecha a: dd/mm/aa
+    const date_es=format(new Date(date_en),'es').substring(0,4);
+    sendWhatsapp(phoneNumber,`¡Hola ${name}! Tu solicitud de turno para el ${date_es} a las ${time}\
+    ha sido recibida con éxito. A la brevedad se confirmará tu turno. Muchas Gracias 👋`)
+
+    const newAppointment=await Appointment.create({name,lastname,time:time.substring(0,5),phoneNumber,date_en,date_es});
     return newAppointment;
 }
 
@@ -21,9 +49,9 @@ const putAppointment=async(id,updateAppointment)=>{
 const deleteAppointment=async(id)=>{
     const appointmentToDelete=await Appointment.findByPk(id)
     if(appointmentToDelete) await Appointment.destroy({where:{id}})
-    else throw Error(`No existe registro de Appointment con el id ${id}`);
+    else throw Error(`No existe registro de turno con el id ${id}`);
 
-    return `El appointment ${id} ha sido eliminado`;
+    return `El turno ${id} ha sido eliminado`;
 }
 
 //para formatear la fecha de 'en' a 'es'
