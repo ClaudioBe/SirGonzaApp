@@ -24,7 +24,7 @@ appointmentRouter.post('/',async(req,res)=>{
         const addAppointment=await postAppointment(req.body);
         res.status(201).json(addAppointment)
     } catch (error) {
-        res.status(400).json(JSON.parse(error.message));
+        res.status(400).json(error.message);
     }
 })
 appointmentRouter.put('/:id/:token',async(req,res)=>{

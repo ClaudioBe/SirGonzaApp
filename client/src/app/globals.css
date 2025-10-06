@@ -1,0 +1,39 @@
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  background-image:url("https://th.bing.com/th/id/R.73f492210a08a1a054b0181b561be4bf?rik=EKxdjapLdajlxg&riu=http%3a%2f%2fwww.clipartbest.com%2fcliparts%2f4ib%2fprM%2f4ibprMX5T.gif&ehk=lY9C6ZJaZMNHYiaBPHPsggcX6CuTCRWIWjG6ovEiwLY%3d&risl=&pid=ImgRaw&r=0"); 
+  background-size: 20%;
+  background-color:#262626;
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}

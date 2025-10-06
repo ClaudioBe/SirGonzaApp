@@ -17,9 +17,7 @@ const comparePassword=async(password,hash)=>{
 }
 
 const generateAccessToken=async(id)=>{
-    return await jwt.sign({id}, secret,{
-        expiresIn:86400 //24 horas
-    })
+    return await jwt.sign({id}, secret,{})
 }
 
 const logIn=async({userName, password})=>{
@@ -92,9 +90,9 @@ const signUp=async({name,lastname,phoneNumber,userName,password})=>{
     return "Usuario creado";
 } 
 // const createAdmin=async({userName,password})=>{
-//     const hash = await encryptPassword(password);
-//     await User.create({userName,password:hash, admin:true});
-//     return "Admin creado";
+//       const hash = await encryptPassword(password);
+//       await User.create({userName,password:hash, admin:true});
+//       return "Admin creado";
 // }
 const editProfile=async(user, id)=>{
     const errors={};
@@ -169,7 +167,7 @@ module.exports={
     getUsers,
     editProfile,
     getUser,
-    /*createAdmin,*/
+    // createAdmin,
     changePassword,
     deleteUser
 }

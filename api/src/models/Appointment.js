@@ -3,7 +3,7 @@ const {DataTypes, NOW}=require('sequelize');
 module.exports= (Sequelize)=>{
     Sequelize.define('appointment',{
         id:{
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             autoIncrement: true,
             primaryKey: true
         },
@@ -19,7 +19,7 @@ module.exports= (Sequelize)=>{
             type:DataTypes.STRING
         },
         time:{
-            type: DataTypes.TIME
+            type: DataTypes.STRING
         },
         date_en:{
             type:DataTypes.DATEONLY,

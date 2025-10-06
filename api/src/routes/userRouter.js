@@ -1,5 +1,5 @@
 const {Router} =require('express');
-const {logIn, signUp, getUsers, editProfile, getUser, changePassword, /*, createAdmin*/
+const {logIn, signUp, getUsers, editProfile, getUser, changePassword, /*createAdmin,*/
 deleteUser}=require('../controllers/usersControllers');
 const {verifyTokenAdmin,verifyTokenProfile}=require('../middlewares/authJwt');
 
@@ -12,7 +12,7 @@ userRouter.post('/logIn',async(req,res)=>{
         const result=await logIn(req.body);
         res.status(201).json(result);
     } catch (error) {
-        res.status(400).json(JSON.parse(error.message));
+        res.status(400).json(error.message);
     }
 })
 
@@ -23,18 +23,18 @@ userRouter.post('/signUp',async(req,res)=>{
         res.status(200).json(user);
     } catch (error) {
         //parseo el string a Object para poder manejarlo despues en la action..
-        res.status(400).json(JSON.parse(error.message));
+        res.status(400).json(error.message);
     }
 })
 
 //ruta post para registrar al admin
 // userRouter.post('/admin',async(req,res)=>{
-//     try {
-//         const user = await createAdmin(req.body)
-//         res.status(200).json(user);
-//     } catch (error) {
-//         res.status(400).json(JSON.parse(error.message))
-//     }
+//       try {
+//           const user = await createAdmin(req.body)
+//           res.status(200).json(user);
+//       } catch (error) {
+//           res.status(400).json(JSON.parse(error.message))
+//       }
 // })
 
 //ruta put para editar perfil
@@ -43,7 +43,7 @@ userRouter.put('/edit/:id/:token',verifyTokenProfile,async(req,res)=>{
         const userUpdated=await editProfile(req.body,req.params.id);
         res.status(200).json(userUpdated)
     } catch (error) {
-        res.status(400).json(JSON.parse(error.message));
+        res.status(400).json(error.message);
     }
 })
 
@@ -53,7 +53,7 @@ userRouter.put('/changePassword/:id/:token',verifyTokenProfile,async(req,res)=>{
         const response=await changePassword(req.body,req.params.id);
         res.status(200).json(response)
     } catch (error) {
-        res.status(400).json(JSON.parse(error.message));
+        res.status(400).json(error.message);
     }
 })
 

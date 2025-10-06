@@ -1,12 +1,14 @@
 const {Appointment}=require('../db');
 
+const regexLetters = RegExp(/^[A-Za-z\s]+$/);
+
 const getAppointments=async()=>{
     return await Appointment.findAll();
 }
 
 const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
     const errors={}
-
+            
     if(name=="") errors.name="Debe ingresar su nombre";
     else{
         if(!regexLetters.test(name))errors.name="El nombre solo debe contener letras";
@@ -29,20 +31,25 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
     if(time=="") errors.time="Debe elegir un horario";
 
     if(date_en=="") errors.date="Debe elegir una fecha";
+    
 
     if(Object.keys(errors).length)throw Error(JSON.stringify(errors));
     
-    //formateo la fecha a: dd/mm/aa
+    // phoneNumber=`54911${phoneNumber}`;
+    
+    // //formateo la fecha a: dd/mm/aa
     const date_es=format(new Date(date_en),'es').substring(0,4);
-    sendWhatsapp(phoneNumber,`¡Hola ${name}! Tu solicitud de turno para el ${date_es} a las ${time}\
-    ha sido recibida con éxito. A la brevedad se confirmará tu turno. Muchas Gracias 👋`)
+    // const message=`¡Hola ${name}! Tu solicitud de turno para el ${date_es} a las ${time}\
+    // ha sido recibida con éxito. A la brevedad se confirmará tu turno. Muchas Gracias 👋`
+    // sendWhatsapp(phoneNumber,message)
 
-    const newAppointment=await Appointment.create({name,lastname,time:time.substring(0,5),phoneNumber,date_en,date_es});
+    const newAppointment=await Appointment.create({name,lastname,time,phoneNumber,date_en,date_es});
     return newAppointment;
 }
 
 const putAppointment=async(id,updateAppointment)=>{
     const update=await Appointment.update(updateAppointment,{where:{id}})
+    if(updateAppointment.confirmed==true) await sendWhatsapp({phoneNumber,message:`Turno del ${date_es} a las ${time} aceptado!`})
     return update;
 }
 
@@ -60,6 +67,7 @@ const format=(date,locale,options)=> {
     date.setDate(date.getDate()+1);
     return new Intl.DateTimeFormat(locale,options).format(date);
 };
+
 
 module.exports={
     getAppointments,postAppointment,putAppointment,deleteAppointment
