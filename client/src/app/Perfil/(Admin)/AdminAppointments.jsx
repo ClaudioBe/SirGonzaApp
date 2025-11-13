@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect ,useState} from "react";
-import {Menu, Table, Tag } from "antd";
+import {Menu, Table, Tag, Button,Modal } from "antd";
 import Reschedule from "./Reschedule";
 import styles from '@/ui/AdminAppointments.module.css'
 import CreateAppointment from "@/app/Turnos/page";
@@ -8,12 +8,22 @@ import { useDeleteAppointmentMutation, useGetAppointmentsQuery, usePutAppointmen
 
 const AdminAppointments=()=>{
     const[appointmentChanged,setAppointmentChanged]=useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
     const{data:appointments,isLoading}=useGetAppointmentsQuery();
     const [updateAppointment]=usePutAppointmentMutation();
     const [deleteAppointment]=useDeleteAppointmentMutation();
     const token=JSON.parse(localStorage.getItem("user")).token;
-    const Appointments=appointments.map(h=> ({...h,key:h.id}));
+    const Appointments=appointments?.map(h=> ({...h,key:h.id}));
 
     useEffect(()=>{setAppointmentChanged(false)},[appointments,appointmentChanged])
 
@@ -67,22 +77,27 @@ const AdminAppointments=()=>{
                     <div className={styles.actionsContainer}>
                         {confirmed
                             ? <p>Aceptado!</p>   
-                            : <div className={styles.actionsContainer}>
-                                <Menu mode="inline" >
-                                    <Menu.SubMenu title='Reprogramar'>
-                                        <Reschedule 
-                                            id={id}
-                                            name={name}
-                                            lastname={lastname}
-                                            time={time}
-                                            date_es={date_es}
-                                            phoneNumber={phoneNumber}
-                                        />
-                                    </Menu.SubMenu>
-                                </Menu>
-                                <Tag className={styles.tag}color='green' onClick={()=>handleAccept(id)}>Aceptar</Tag>
-                            </div>}
-                            <Tag className={styles.tag}color='red' onClick={()=>(handleDelete(id))}>Eliminar</Tag>
+                            : <>
+                                <Tag className={styles.tag} onClick={()=>showModal()}>Reprogramar</Tag>
+                                <Modal
+                                    title="Basic Modal"
+                                    closable={{ 'aria-label': 'Custom Close Button' }}
+                                    open={isModalOpen}
+                                    onCancel={handleCancel}
+                                    footer={[]}
+                                >
+                                    <Reschedule 
+                                        id={id}
+                                        name={name}
+                                        lastname={lastname}
+                                        time={time}
+                                        date_es={date_es}
+                                        phoneNumber={phoneNumber}
+                                    />
+                                </Modal>
+                                <Tag className={styles.tag} color='green' onClick={()=>handleAccept(id)}>Aceptar</Tag>
+                            </>}
+                            <Tag className={styles.tag} color='red' onClick={()=>(handleDelete(id))}>Eliminar</Tag>
                     </div>
                 
         }

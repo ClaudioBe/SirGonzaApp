@@ -1,19 +1,21 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLogInMutation } from "@/redux/services/userApi";
 import styles from "@/ui/LogIn.module.css";
 import { useRouter } from 'next/navigation';
 import swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/features/userSlice";
+import { logout, setUser } from "@/redux/features/userSlice";
 
 const LogIn=()=>{
     const [input,setInput]=useState({userName:"",password:""});
     const [errors,setErrors]=useState({})
- 
+
     const[logIn]=useLogInMutation();
     const router=useRouter();
     const dispatch=useDispatch();
+    
+     useEffect(()=>{dispatch(logout())},[dispatch])
     const handleChange=(e)=>{
         setInput({...input,[e.target.name]:e.target.value});
     }
@@ -24,10 +26,10 @@ const LogIn=()=>{
         //si hay errores los guardo en el estado local
         try {
             //.unwrap() para poder capturar el error
-            await logIn(input).unwrap().then(res=>{dispatch(setUser(res))})
+            await logIn(input).unwrap().then(r=>dispatch(setUser(r)))
             router.push("/Perfil")
 
-        } catch (error) {     
+        } catch (error) {    
             setErrors(JSON.parse(error.data));
             swal.fire({
                 title:"Hay errores!",

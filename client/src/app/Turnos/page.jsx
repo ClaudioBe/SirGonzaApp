@@ -62,6 +62,11 @@ const CreateAppointment=({admin})=>{
                     e.target.value = '';
                     alert('Domingos y lunes no disponibles!');
                 }
+                if(dia===5 || dia===6){
+                    //elimino la seleccion
+                    e.target.value='';
+                    alert("Los sabados y domingos se atiende por orden de llegada!")
+                }
                 if(availableTimes.length==0) {
                     e.target.value="";
                     alert("No hay horarios disponibles ese dia!")

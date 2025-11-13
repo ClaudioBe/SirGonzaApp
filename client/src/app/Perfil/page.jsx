@@ -7,7 +7,7 @@ import DashboardAdmin from './(Admin)/DashboardAdmin';
 import { logout } from '@/redux/features/userSlice';
 
 function Profile() {
-    const user=useSelector(state=>state.user.user)
+    const user=useSelector(state=>state.user)
     const router=useRouter()
     const dispatch=useDispatch();
     

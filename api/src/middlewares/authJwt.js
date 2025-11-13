@@ -3,7 +3,7 @@ const {User}=require('../db');
 
 const verifyToken=(admin)=>async (req,res,next)=>{
     try {
-        const token=req.params.token;
+        const token=req.cookies.access_token;
         //si no se pasa un token por parametro...
         if(!token) return res.status(400).send("No hay token");
     

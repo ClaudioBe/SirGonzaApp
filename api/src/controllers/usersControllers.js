@@ -39,7 +39,7 @@ const logIn=async({userName, password})=>{
     if(Object.keys(errors).length)throw Error(JSON.stringify(errors));
 
     //si la contraseña es correcta devuelve los datos del usuario y el token
-    return {user,token:await generateAccessToken(user.id)}; 
+    return {user:user.dataValues,token:await generateAccessToken(user.id)}; 
 }
 
 const signUp=async({name,lastname,phoneNumber,userName,password})=>{
@@ -89,11 +89,11 @@ const signUp=async({name,lastname,phoneNumber,userName,password})=>{
     await User.create({name,lastname,phoneNumber,userName,password:hash});
     return "Usuario creado";
 } 
-// const createAdmin=async({userName,password})=>{
-//       const hash = await encryptPassword(password);
-//       await User.create({userName,password:hash, admin:true});
-//       return "Admin creado";
-// }
+const createAdmin=async({userName,password})=>{
+       const hash = await encryptPassword(password);
+       await User.create({userName,password:hash, admin:true});
+       return "Admin creado";
+ }
 const editProfile=async(user, id)=>{
     const errors={};
     if(user.name!=undefined){
@@ -134,9 +134,11 @@ const changePassword= async({oldPassword,newPassword,newPassword2},id)=>{
     if(newPassword2=="") errors.newPassword2="Debe ingresar su nueva contraseña otra vez";
     if(newPassword!=newPassword2) errors.newPassword2="No ha ingresado la misma contraseña";
 
-    if(newPassword==newPassword2 && await comparePassword(newPassword,userToUpdate.password)) 
+    if(!await comparePassword(oldPassword,userToUpdate.password))
         errors.oldPassword="Contraseña antigua incorrecta";
-
+        
+    if(newPassword==newPassword2 && newPassword==oldPassword)
+        errors.newPassword="Ingreso la antigua contraseña"
     if(Object.keys(errors).length) throw Error(JSON.stringify(errors));
     //finalmente, si no hay errores, actualizo la contraseña del usuario a 
     //la ingresada guardandola encriptada en la BBDD... 
@@ -167,7 +169,7 @@ module.exports={
     getUsers,
     editProfile,
     getUser,
-    // createAdmin,
+    createAdmin,
     changePassword,
     deleteUser
 }
