@@ -8,3 +8,20 @@
 .tag{
     cursor:pointer;
 }
+.container {
+    display: flex;
+    flex-direction: column; /* Apila elementos verticalmente */
+    gap: 20px; /* Espacio entre la tabla y el botón */
+    padding: 1%;
+}
+
+.btn {
+    background-color: green; 
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+   
+    align-self: flex-start; /* Alinea el botón a la izquierda/inicio del contenedor */
+    margin-bottom: 20px; /* Espacio debajo del botón */
+}

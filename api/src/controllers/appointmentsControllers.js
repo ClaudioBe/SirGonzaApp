@@ -35,7 +35,7 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
 
     if(Object.keys(errors).length)throw Error(JSON.stringify(errors));
     
-    // phoneNumber=`54911${phoneNumber}`;
+    phoneNumber=`54911${phoneNumber}`;
     
     // //formateo la fecha a: dd/mm/aa
     const date_es=format(new Date(date_en),'es').substring(0,4);
@@ -49,7 +49,7 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
 
 const putAppointment=async(id,updateAppointment)=>{
     const update=await Appointment.update(updateAppointment,{where:{id}})
-    if(updateAppointment.confirmed==true) await sendWhatsapp({phoneNumber,message:`Turno del ${date_es} a las ${time} aceptado!`})
+    // if(updateAppointment.confirmed==true) await sendWhatsapp({phoneNumber,message:`Turno del ${date_es} a las ${time} aceptado!`})
     return update;
 }
 

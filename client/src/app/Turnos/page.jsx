@@ -19,8 +19,6 @@ const CreateAppointment=({admin})=>{
     const[createAppointment]=usePostAppointmentsMutation();  
     
     if(isLoading) <p color="yellow">Cargandoooooo</p>
-        
-    const[submittedForm,setSubmittedForm]=useState(false);
 
     const[input,setInput]=useState({
         name:"",
@@ -71,12 +69,16 @@ const CreateAppointment=({admin})=>{
                     e.target.value="";
                     alert("No hay horarios disponibles ese dia!")
                 }
-                //primera opcion como placeholder
-            document.getElementById('time').innerHTML=["<option disabled selected>Selecciona una opción</option>"].concat(availableTimes);
-             //una vez seleccionada la fecha se activa el select del horario con los que estan disponibles
-            document.getElementById("time").disabled=false;
+                
+                //una vez seleccionada una fecha disponible se activa el select del horario con los que estan disponibles
+                if(e.target.value!=""){
+                    document.getElementById("time").disabled=false;
+                    //primera opcion como placeholder
+                    document.getElementById('time').innerHTML=
+                    ["<option disabled selected>Selecciona una opción</option>"].concat(availableTimes);
+                }
             
-        }
+            }
         setInput({...input,[e.target.name]:e.target.value});
     }
 
@@ -86,7 +88,7 @@ const CreateAppointment=({admin})=>{
             await createAppointment(input).unwrap();
             //sweet alert que se muestra por 1s ocultando el boton de confirmación
             swal.fire({
-                title:"Se ha enviado tu solicitud!",
+                title:admin?"Turno agendado!":"Se ha enviado tu solicitud!",
                 icon: 'success',
                 timer:1000,
                 iconColor:'green'
@@ -96,20 +98,21 @@ const CreateAppointment=({admin})=>{
                 time:"",
                 date_en:"",
                 name:"",
-                lastname:""
+                lastname:"",
+                phoneNumber:""
+
             })
             setErrors({
                 time:"",
                 date_en:"",
                 name:"",
-                lastname:""
+                lastname:"",
+                phoneNumber:""
+
             })
             //vuelvo a hacer un fetch de los turnos para que data cambie, y asi luego de pedir un turno..
             //el horario no este disponible sin necesidad de recargar la pagina 
             refetch()
-            //al solicitar el turno cambia el estado de submittedForm para que vuelva a renderizarse el..
-            //componente
-            setSubmittedForm(submittedForm?false:true);
         } catch (error) {
             setErrors(JSON.parse(error.data))
             swal.fire({
@@ -124,13 +127,14 @@ const CreateAppointment=({admin})=>{
 
     return(
         <div className={styles.container}>
-            <form key={submittedForm} onSubmit={handleSubmit} className={styles.form} >
+            <form onSubmit={handleSubmit} className={styles.form} >
                 <h1>{admin?"" :"Solicitar Turno"}</h1>
                 <div>
                     <label>Nombre</label>
                     <input 
                         type="text" 
                         name="name"
+                        value={input.name}
                         onChange={handleChange}
                     />
                 </div>
@@ -141,6 +145,7 @@ const CreateAppointment=({admin})=>{
                     <input 
                         type="text" 
                         name="lastname"
+                        value={input.lastname}
                         onChange={handleChange}
                     />
                 </div>
@@ -158,6 +163,7 @@ const CreateAppointment=({admin})=>{
                         placeholder="22334455"
                         inputMode="numeric"
                         maxLength="8"
+                        value={input.phoneNumber}
                         onChange={handleChange}
                     />
                 </div> 
@@ -171,6 +177,7 @@ const CreateAppointment=({admin})=>{
                         name="date_en"
                         min={minDate}
                         max={maxDate}
+                        value={input.date_en}
                         onChange={handleChange}
                     />
                 </div>   
@@ -182,6 +189,7 @@ const CreateAppointment=({admin})=>{
                         disabled={true}
                         name="time"
                         id="time"
+                        value={input.time}
                         onChange={handleChange}
                     >
                     </select>

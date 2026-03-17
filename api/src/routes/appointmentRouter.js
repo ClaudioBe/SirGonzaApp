@@ -27,7 +27,7 @@ appointmentRouter.post('/',async(req,res)=>{
         res.status(400).json(error.message);
     }
 })
-appointmentRouter.put('/:id/:token',async(req,res)=>{
+appointmentRouter.put('/:id',verifyTokenAdmin,async(req,res)=>{
     try {
         const updateAppointment=await putAppointment(req.params.id,req.body);
         res.status(200).json(updateAppointment);
@@ -36,7 +36,7 @@ appointmentRouter.put('/:id/:token',async(req,res)=>{
     }
 })
 
-appointmentRouter.delete('/:id/:token',verifyTokenAdmin,async(req,res)=>{
+appointmentRouter.delete('/:id',verifyTokenAdmin,async(req,res)=>{
     try {
         const deleted=await deleteAppointment(req.params.id);
         res.status(201).json(deleted)

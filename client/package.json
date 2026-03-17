@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^5.27.1",
     "bootstrap": "^5.3.7",
+    "js-cookie": "^3.0.5",
     "next": "15.4.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",

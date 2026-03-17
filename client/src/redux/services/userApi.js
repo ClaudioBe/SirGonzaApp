@@ -4,6 +4,8 @@ export const userApi = createApi({
     reducerPath: 'userAPI',
     baseQuery: fetchBaseQuery({
         baseUrl:"http://localhost:3001/",
+        //para que funcionen las cookies(token)
+        credentials:"include"
     }),
     endpoints:(builder)=>({
         //query es como unn get en axios o fetch
@@ -27,6 +29,13 @@ export const userApi = createApi({
                     body: user
                 })
             }),
+            //post porque se tiene que eliminar la cookie
+            logOut: builder.mutation({
+                query:()=>({
+                    url:"users/admin/logOut",
+                    method:"POST"
+                })
+            }),
             deleteUser: builder.mutation({
                 query:(id,token)=>({
                     url:`/users/${id}/${token}`,
@@ -39,11 +48,12 @@ export const userApi = createApi({
                     method:"DELETE",
                 })
             }),
+
     })
 })
 
 export const {
-    useGetUsers,useGetUserById,useLogInMutation,useSignUpMutation,
+    useGetUsers,useGetUserById,useLogInMutation,useLogOutMutation,useSignUpMutation,
     useDeleteUserForAdminMutation,useDeleteUserMutation}=userApi;
 
 

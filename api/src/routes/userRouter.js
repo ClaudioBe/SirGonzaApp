@@ -5,15 +5,24 @@ const {verifyTokenAdmin,verifyTokenProfile}=require('../middlewares/authJwt');
 
 const userRouter=Router();
 
-
 //ruta post para loguearse
 userRouter.post('/logIn',async(req,res)=>{
     try {
         const result=await logIn(req.body);
         const{password,...publicUser}=result.user;
+        const month = 30 * 24 * 60 * 60 * 1000; //un mes en mseg
         res
+            .cookie('user',JSON.stringify(publicUser),{
+                httpOnly:false,
+                sameSite:'lax',
+                secure:false,
+                maxAge:month
+        })
             .cookie('access_token',result.token,{
-                httpOnly:true //la cookie solo se puede acceder desde el servidor
+                httpOnly:true, //la cookie solo se puede acceder desde el servidor
+                sameSite:'lax',
+                secure: false,
+                maxAge:month
             })
             .status(201).json(publicUser);
     } catch (error) {
@@ -21,6 +30,14 @@ userRouter.post('/logIn',async(req,res)=>{
     }
 })
 
+//ruta para cerrar sesion de admin
+userRouter.post('/admin/logout',async(req,res)=>{
+    res.clearCookie('access_token',{
+        httpOnly: true,
+        sameSite:'lax',
+        secure:false
+    }).status(200).send("Sesión Cerrada")
+})
 //ruta post para registrarse
 userRouter.post('/signUp',async(req,res)=>{
     try {

@@ -1,35 +1,51 @@
-import {Menu} from 'antd';
+import { Menu } from 'antd';
 import styles from '@/ui/DashboardAdmin.module.css';
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
-import {CalendarOutlined, PoweroffOutlined, UserOutlined} from '@ant-design/icons';
+import { CalendarOutlined, PoweroffOutlined, UserOutlined } from '@ant-design/icons';
 import AdminAppointments from './AdminAppointments';
-import Users from "./Users"
+import { useLogOutMutation } from '@/redux/services/userApi';
 
-const DashboardAdmin =()=>{
-    const router=useRouter()
+const DashboardAdmin = () => {
+    const [logOut]=useLogOutMutation()
+    const router = useRouter();
 
-    return(
+    //items del menú de antd en un array 
+    const items = [
+        {
+            key: 'turnos_submenu', 
+            icon: <CalendarOutlined />,
+            label: 'Turnos',
+            children: [
+                {
+                    key: 'turnos_content',
+                    label: (
+                        <div style={{ padding: "1%" }}>
+                            <AdminAppointments />
+                        </div>
+                    ),
+                    type: 'group', // Esto permite meter el componente adentro sin errores
+                },
+            ],
+        },
+        {
+            key: 'logOut',
+            icon: <PoweroffOutlined />,
+            label: 'Cerrar Sesion',
+            danger: true,
+            onClick: () => logOut() && router.push('/IniciarSesion'),
+        },
+    ];
+
+    return (
         <div>
-            <Menu className={styles.container} mode='inline'>
-                <Menu.SubMenu icon={<CalendarOutlined/>} title="Turnos">
-                    <div style={{padding:"1%"}}>
-                        <AdminAppointments/>
-                    </div>  
-                </Menu.SubMenu>
-
-                {/* <Menu.SubMenu icon={<UserOutlined/>} title="Clientes registrados">
-                    <div style={{padding:"1%"}}>
-                        <Users/>
-                    </div>  
-                </Menu.SubMenu> */}
-            
-                <Menu.Item icon={<PoweroffOutlined/>} key="logOut" onClick={()=>router.push('/IniciarSesion')} danger={true}>
-                    Cerrar Sesion
-                </Menu.Item>
-            </Menu>
+            <Menu 
+                className={styles.container} 
+                mode="inline" 
+                items={items} // Pasamos los items por prop
+            />
         </div>
-    )
-}
+    );
+};
 
 export default DashboardAdmin; 

@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect ,useState} from "react";
-import {Menu, Table, Tag, Button,Modal } from "antd";
+import {Table, Tag, Button,Modal } from "antd";
 import Reschedule from "./Reschedule";
 import styles from '@/ui/AdminAppointments.module.css'
 import CreateAppointment from "@/app/Turnos/page";
@@ -8,33 +8,37 @@ import { useDeleteAppointmentMutation, useGetAppointmentsQuery, usePutAppointmen
 
 const AdminAppointments=()=>{
     const[appointmentChanged,setAppointmentChanged]=useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
-        setIsModalOpen(true);
+    const [isModalRescheduleOpen, setIsModalRescheduleOpen] = useState(false);
+    const [isModalCreateOpen, setIsModalCreateOpen]=useState(false);
+   
+ 
+    const handleCancelReschedule = () => {
+        setIsModalRescheduleOpen(false);
     };
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
+
+    const handleCancelCreate=()=>{
+        setIsModalCreateOpen(false)
+    }
 
     const{data:appointments,isLoading}=useGetAppointmentsQuery();
     const [updateAppointment]=usePutAppointmentMutation();
     const [deleteAppointment]=useDeleteAppointmentMutation();
-    const token=JSON.parse(localStorage.getItem("user")).token;
     const Appointments=appointments?.map(h=> ({...h,key:h.id}));
 
-    useEffect(()=>{setAppointmentChanged(false)},[appointments,appointmentChanged])
-
     const handleAccept=(id)=>{
-        updateAppointment({confirmed:true},id,token);
+        console.log("id: "+id);
+        
+        updateAppointment({confirmed:true},id);
         setAppointmentChanged(true);
     }
 
     const handleDelete=(id)=>{
-        deleteAppointment(id,token);
+        deleteAppointment(id);
         setAppointmentChanged(true);
+    }
+
+    const handleClick=()=>{
+        setIsModalCreateOpen(true);
     }
 
     const columns = [
@@ -78,12 +82,12 @@ const AdminAppointments=()=>{
                         {confirmed
                             ? <p>Aceptado!</p>   
                             : <>
-                                <Tag className={styles.tag} onClick={()=>showModal()}>Reprogramar</Tag>
+                                <Tag className={styles.tag} onClick={()=>setIsModalRescheduleOpen(true)}>Reprogramar</Tag>
                                 <Modal
-                                    title="Basic Modal"
+                                    title="Reprogramar"
                                     closable={{ 'aria-label': 'Custom Close Button' }}
-                                    open={isModalOpen}
-                                    onCancel={handleCancel}
+                                    open={isModalRescheduleOpen}
+                                    onCancel={handleCancelReschedule}
                                     footer={[]}
                                 >
                                     <Reschedule 
@@ -106,11 +110,17 @@ const AdminAppointments=()=>{
     return (
         <div>
             <Table columns={columns} dataSource={Appointments} />
-            <Menu mode="inline">
-                <Menu.SubMenu title="Agregar turno">
-                    <CreateAppointment admin={true}/>
-                </Menu.SubMenu>
-            </Menu>
+            <Button onClick={handleClick}>Agendar turno</Button>
+            
+            <Modal
+                title="Agendar Turno"
+                closable={{ 'aria-label': 'Custom Close Button' }}
+                open={isModalCreateOpen}
+                onCancel={handleCancelCreate}
+                footer={[]}
+            >
+                <CreateAppointment admin={true}/>
+            </Modal>
         </div>
     );
 }
