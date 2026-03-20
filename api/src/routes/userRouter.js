@@ -2,7 +2,8 @@ const {Router} =require('express');
 const {logIn, signUp, getUsers, editProfile, getUser, changePassword, createAdmin,
 deleteUser}=require('../controllers/usersControllers');
 const {verifyTokenAdmin,verifyTokenProfile}=require('../middlewares/authJwt');
-
+const {subscription}=require('../utils/webPush');
+const Cookies=require('cookie-parser')
 const userRouter=Router();
 
 //ruta post para loguearse
@@ -26,6 +27,8 @@ userRouter.post('/logIn',async(req,res)=>{
             })
             .status(201).json(publicUser);
     } catch (error) {
+        console.log("error login: " + error);
+        
         res.status(400).json(error.message);
     }
 })
@@ -36,7 +39,13 @@ userRouter.post('/admin/logout',async(req,res)=>{
         httpOnly: true,
         sameSite:'lax',
         secure:false
-    }).status(200).send("Sesión Cerrada")
+    })
+    res.clearCookie('user',{
+        httpOnly: false,
+        sameSite:'lax',
+        secure:false
+    })
+    .status(200).send("Sesión Cerrada")
 })
 //ruta post para registrarse
 userRouter.post('/signUp',async(req,res)=>{
@@ -51,14 +60,14 @@ userRouter.post('/signUp',async(req,res)=>{
 })
 
 //ruta post para registrar al admin
-userRouter.post('/admin',async(req,res)=>{
-       try {
-           const user = await createAdmin(req.body)
-           res.status(200).json(user);
-       } catch (error) {
-           res.status(400).json(JSON.parse(error.message))
-       }
-})
+// userRouter.post('/admin',async(req,res)=>{
+//        try {
+//            const user = await createAdmin(req.body)
+//            res.status(200).json(user);
+//        } catch (error) {
+//            res.status(400).json(JSON.parse(error.message))
+//        }
+// })
 
 //ruta put para editar perfil
 userRouter.put('/edit/:id',verifyTokenProfile,async(req,res)=>{
@@ -119,6 +128,17 @@ userRouter.delete('/:id',verifyTokenProfile,async(req,res)=>{
     } catch (error) {
         res.status(400).send(error.message)
     }
+})
+
+//ruta para recibir la suscripcion del cliente
+userRouter.post('/subscription',async(req,res)=>{
+    const user= JSON.parse(req.cookies.user);
+    try {
+        await subscription(req.body,user.id)
+        res.status(200).send("Te has suscripto a las notificaciones")
+    } catch (error) {
+        res.status(400).send(error.message)
+    } 
 })
 
 module.exports={userRouter};

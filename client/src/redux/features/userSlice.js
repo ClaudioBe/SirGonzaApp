@@ -1,5 +1,6 @@
 "use client"
 import { createSlice } from '@reduxjs/toolkit';
+import Cookies from 'js-cookie';
 
 const initialState = {
   admin: null,
@@ -11,18 +12,15 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      
       const user = action.payload;
       state.admin = user.admin
       state.user = user;
-
-      //para que persistan los datos en el local storage del usuario
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("admin", JSON.stringify(user.admin));
     },
     restoreSession: (state) => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      const admin = JSON.parse(localStorage.getItem("admin"));
+      const userCookie=Cookies.get('user')
+
+      const user=userCookie?JSON.parse(userCookie):null;
+      const admin = user?.admin
 
       state.user = user;
       state.admin = admin;

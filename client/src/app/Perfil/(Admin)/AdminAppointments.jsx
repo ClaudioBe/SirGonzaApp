@@ -7,7 +7,6 @@ import CreateAppointment from "@/app/Turnos/page";
 import { useDeleteAppointmentMutation, useGetAppointmentsQuery, usePutAppointmentMutation } from "@/redux/services/appointmentApi";
 
 const AdminAppointments=()=>{
-    const[appointmentChanged,setAppointmentChanged]=useState(false);
     const [isModalRescheduleOpen, setIsModalRescheduleOpen] = useState(false);
     const [isModalCreateOpen, setIsModalCreateOpen]=useState(false);
    
@@ -20,21 +19,30 @@ const AdminAppointments=()=>{
         setIsModalCreateOpen(false)
     }
 
-    const{data:appointments,isLoading}=useGetAppointmentsQuery();
+    const{data:appointments,isLoading,refetch}=useGetAppointmentsQuery();
     const [updateAppointment]=usePutAppointmentMutation();
     const [deleteAppointment]=useDeleteAppointmentMutation();
     const Appointments=appointments?.map(h=> ({...h,key:h.id}));
 
-    const handleAccept=(id)=>{
-        console.log("id: "+id);
-        
-        updateAppointment({confirmed:true},id);
-        setAppointmentChanged(true);
+    const handleAccept=async(id)=>{    
+        try {
+            //rtk query solo acepta un parametro, por eso debo pasarlo dentro de un objeto
+            await updateAppointment({confirmed:true,id}).unwrap()
+            //para que se refresquen los turnos con el que se acepto
+            refetch();
+        } catch (error) {
+            console.log(error.data);
+        }    
     }
 
-    const handleDelete=(id)=>{
-        deleteAppointment(id);
-        setAppointmentChanged(true);
+    const handleDelete=async(id)=>{
+        try {
+            await deleteAppointment(id).unwrap()
+            //para que se refresquen los turnos con el que se eliminó
+            refetch()
+        } catch (error) {
+            console.log(error.data);
+        }
     }
 
     const handleClick=()=>{
@@ -113,13 +121,13 @@ const AdminAppointments=()=>{
             <Button onClick={handleClick}>Agendar turno</Button>
             
             <Modal
-                title="Agendar Turno"
+                title={null}
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalCreateOpen}
                 onCancel={handleCancelCreate}
-                footer={[]}
+                footer={null}
             >
-                <CreateAppointment admin={true}/>
+                <CreateAppointment admin={true} accept={handleAccept}/>
             </Modal>
         </div>
     );

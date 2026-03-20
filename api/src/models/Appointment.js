@@ -31,6 +31,10 @@ module.exports= (Sequelize)=>{
         confirmed:{
             type:DataTypes.BOOLEAN,
             defaultValue:false
+        },
+        userId:{
+            type:DataTypes.BIGINT,
+            allowNull:true
         }
 
     },{timestamps:false})

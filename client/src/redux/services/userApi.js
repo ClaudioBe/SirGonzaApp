@@ -48,16 +48,16 @@ export const userApi = createApi({
                     method:"DELETE",
                 })
             }),
-
+            subscription: builder.mutation({
+                query:(subscription)=>({
+                    url:'users/subscription',
+                    method:"POST",
+                    body:subscription
+                })
+            })
     })
 })
 
 export const {
     useGetUsers,useGetUserById,useLogInMutation,useLogOutMutation,useSignUpMutation,
-    useDeleteUserForAdminMutation,useDeleteUserMutation}=userApi;
-
-
-
-// export const logOut=()=>async(dispatch)=>{
-//     return dispatch({type:LOG_OUT})
-// }
+    useDeleteUserForAdminMutation,useDeleteUserMutation,useSubscriptionMutation}=userApi;

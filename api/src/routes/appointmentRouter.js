@@ -29,7 +29,7 @@ appointmentRouter.post('/',async(req,res)=>{
 })
 appointmentRouter.put('/:id',verifyTokenAdmin,async(req,res)=>{
     try {
-        const updateAppointment=await putAppointment(req.params.id,req.body);
+        const updateAppointment=await putAppointment(req.body,req.params.id);
         res.status(200).json(updateAppointment);
     } catch (error) {
         res.status(400).send(error.message)

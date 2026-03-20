@@ -88,12 +88,13 @@ const signUp=async({name,lastname,phoneNumber,userName,password})=>{
     const hash = await encryptPassword(password);
     await User.create({name,lastname,phoneNumber,userName,password:hash});
     return "Usuario creado";
-} 
+    } 
 const createAdmin=async({userName,password})=>{
-       const hash = await encryptPassword(password);
-       await User.create({userName,password:hash, admin:true});
-       return "Admin creado";
- }
+    const hash = await encryptPassword(password);
+    await User.create({userName,password:hash, admin:true});
+    return "Admin creado";
+}
+
 const editProfile=async(user, id)=>{
     const errors={};
     if(user.name!=undefined){

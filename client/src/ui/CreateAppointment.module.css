@@ -4,7 +4,11 @@
 }
 
 .form{
-    background-color: #464646;
+    background-image: url(../assets/sirgonza.jpeg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: black;
+    background-size:contain;
     display:grid;
     grid-template-columns: repeat(5,1fr);
     grid-template-rows: 1fr repeat(7,auto);
@@ -13,13 +17,34 @@
     gap:2vh;
     border-radius:1vh
 }
+.form h1 {
+  grid-column-start: span 5;
+  color: #fff; /* Color del centro de la letra (blanco para que resalte) */
+  font-family: sans-serif; /* O una fuente similar a la del logo */
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  
+  /* neon varias capas de sombras */
+  text-shadow: 
+    0 0 5px #1eca00,   /* Resplandor interno */
+    0 0 10px #1eca00,  /* Brillo medio */
+    0 0 20px #1eca00,  /* Brillo extendido */
+    0 0 40px #008000;  /* Sombra verde oscura de fondo */
+  animation: flicker 2s infinite alternate;
+}
 
-.form h1{
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+/* .form h1{
     grid-column-start: span 5;
-    color:black;
+    color:white;
     font-family: 'Roboto', sans-serif;
     text-align: center;
-}
+} */
 
 .form > div{
     display:flex;

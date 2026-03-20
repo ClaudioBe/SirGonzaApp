@@ -1,6 +1,7 @@
-const {Appointment}=require('../db');
-
+const {Appointment, Notification,User}=require('../db');
+const {sendPush}=require('../utils/webPush');
 const regexLetters = RegExp(/^[A-Za-z\s]+$/);
+const regexNumbers= RegExp(/^[0-9]*$/)
 
 const getAppointments=async()=>{
     return await Appointment.findAll();
@@ -26,6 +27,7 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
     if(phoneNumber=="") errors.phoneNumber="Debe ingresar su numero de celular";
     else {
         if(phoneNumber.length!=8) errors.phoneNumber="Debe ingresar 6 digitos";
+        if(!regexNumbers.test(phoneNumber)) errors.phoneNumber="Debe ingresar solo numeros"
     }
 
     if(time=="") errors.time="Debe elegir un horario";
@@ -43,17 +45,43 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
     // ha sido recibida con éxito. A la brevedad se confirmará tu turno. Muchas Gracias 👋`
     // sendWhatsapp(phoneNumber,message)
 
+    //se guarda el turno en la bbdd
     const newAppointment=await Appointment.create({name,lastname,time,phoneNumber,date_en,date_es});
+    //Encuentro al admin 
+    const admin = await User.findOne({ where: {admin:true} });
+
+    const title="¡Nueva solicitud de Turno!";
+    const message=`Cliente: ${name}` + " "+ lastname
+
+    //envio al admin la notificacion
+    if(admin.pushSubscription)await sendPush(admin.pushSubscription,title,message );
+
+    //guardo la notificacion en la bbdd
+    await Notification.create({title,message,userId:admin.id})
     return newAppointment;
 }
 
-const putAppointment=async(id,updateAppointment)=>{
-    const update=await Appointment.update(updateAppointment,{where:{id}})
+const putAppointment=async(updateAppointment,id)=>{
+    const update=await Appointment.update(updateAppointment,{where:{id}});
+    const appointment= await Appointment.findOne({where:{id}})   
+
+    if(appointment.userId && updateAppointment.confirmed){
+        const user = await User.findByPk(appointment.userId);
+        if(user && user.pushSubscription){
+            const message=`Tu turno del ${appointment.date_es} fue confirmado`;
+            const title="¡Turno Confirmado!";
+
+            //guardo la notificacion en la bbdd
+            await Notification.create({title,message,userId:user.id})
+            await sendPush(user.pushSubscription,title, message)
+        }
+    }
+    
     // if(updateAppointment.confirmed==true) await sendWhatsapp({phoneNumber,message:`Turno del ${date_es} a las ${time} aceptado!`})
     return update;
 }
 
-const deleteAppointment=async(id)=>{
+const deleteAppointment=async(id)=>{ 
     const appointmentToDelete=await Appointment.findByPk(id)
     if(appointmentToDelete) await Appointment.destroy({where:{id}})
     else throw Error(`No existe registro de turno con el id ${id}`);

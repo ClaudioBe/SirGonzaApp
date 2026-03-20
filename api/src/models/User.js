@@ -28,5 +28,9 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        pushSubscription:{
+            type:DataTypes.JSON,
+            allowNull:true
+        }
     },{timestamps:false})
 }

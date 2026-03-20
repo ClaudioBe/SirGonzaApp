@@ -21,7 +21,8 @@ export const appointmentApi = createApi({
                 
             }),
             putAppointment: builder.mutation({
-                query:({updateAppoinment,id})=>( console.log("id redux: "+id),{
+                //spread operator para que el appointment se separe en un objeto
+                query:({id,...updateAppoinment})=>( console.log("appointment: "+updateAppoinment + "id: "+ id),{
                     url:`/appointments/${id}`,
                     method:"PUT",
                     body:updateAppoinment

@@ -1,22 +1,25 @@
 "use client"
 import React, { useEffect } from 'react';
-import Cookies from 'js-cookie';
 import {useRouter} from "next/navigation";
 import DashboardAdmin from './(Admin)/DashboardAdmin';
 import { useLogOutMutation } from '@/redux/services/userApi';
+import { useSelector } from 'react-redux';
 
 function Profile() {
     const [logOut]=useLogOutMutation();
     const router=useRouter()
-    const userCookie=Cookies.get('user')
-    const user=userCookie?JSON.parse(userCookie):null;
+    //obtengo los datos del usuario guardado en el estado de redux
+    const user= useSelector(state=>state.user)  
 
-    useEffect(()=>{if(!user)router.push('/')},[])
+    //al renderizar el componente si el usuario es nulo se redirige al inicio despues de retornar null
+    useEffect(()=>{if(user==null) router.push('/')},[])
     const handleClick=()=>{
         logOut()
         router.push('/IniciarSesion')
     }
     
+    if(user==null) return null;
+
     return user?.admin
             ? <DashboardAdmin/>
             :(<div>

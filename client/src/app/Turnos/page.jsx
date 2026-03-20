@@ -20,6 +20,8 @@ const CreateAppointment=({admin})=>{
     
     if(isLoading) <p color="yellow">Cargandoooooo</p>
 
+    const [availableTimes,setAvailableTimes]=useState([])
+
     const[input,setInput]=useState({
         name:"",
         lastname:"",
@@ -39,20 +41,20 @@ const CreateAppointment=({admin})=>{
             times.push(start + ":30")
         }
         return times;
-    }
-    
+    }    
     const times=timesGenerator(10,3).concat(timesGenerator(17,3));
+
+
     const handleChange=(e)=>{
-            const dia = new Date(e.target.value).getUTCDay();  
-           
-            const notAvailableTimes=appointments?.filter(a=>a.date_en===e.target.value)
-                .map(a=>a.time)
-            //filtro de todos los horarios posibles, los que estan disponibles en la fecha seleccionada
-            const availableTimes=times.filter(h=>!notAvailableTimes?.includes(h))
-                .map(h=>` <option value=${h}>${h}</option>`)
-            
              //si el dia seleccionado es un domingo o un lunes...
             if(e.target.name=="date_en"){
+                const dia = new Date(e.target.value).getUTCDay();  
+           
+                const notAvailableTimes=appointments?.filter(a=>a.date_en===e.target.value)
+                    .map(a=>a.time)
+                //filtro de todos los horarios posibles, los que estan disponibles en la fecha seleccionada
+                const availableTimes=times.filter(h=>!notAvailableTimes?.includes(h))
+               
                 if(dia===0 || dia ===1){
                     //para que no se borre lo demas del formulario
                  
@@ -60,24 +62,17 @@ const CreateAppointment=({admin})=>{
                     e.target.value = '';
                     alert('Domingos y lunes no disponibles!');
                 }
-                if(dia===5 || dia===6){
-                    //elimino la seleccion
-                    e.target.value='';
-                    alert("Los sabados y domingos se atiende por orden de llegada!")
-                }
+                // if(dia===5 || dia===6){
+                //     //elimino la seleccion
+                //     e.target.value='';
+                //     alert("Los sabados y domingos se atiende por orden de llegada!")
+                // }
                 if(availableTimes.length==0) {
                     e.target.value="";
                     alert("No hay horarios disponibles ese dia!")
                 }
                 
-                //una vez seleccionada una fecha disponible se activa el select del horario con los que estan disponibles
-                if(e.target.value!=""){
-                    document.getElementById("time").disabled=false;
-                    //primera opcion como placeholder
-                    document.getElementById('time').innerHTML=
-                    ["<option disabled selected>Selecciona una opción</option>"].concat(availableTimes);
-                }
-            
+                setAvailableTimes(availableTimes);
             }
         setInput({...input,[e.target.name]:e.target.value});
     }
@@ -128,7 +123,7 @@ const CreateAppointment=({admin})=>{
     return(
         <div className={styles.container}>
             <form onSubmit={handleSubmit} className={styles.form} >
-                <h1>{admin?"" :"Solicitar Turno"}</h1>
+                <h1>{admin?"Agendar Turno" :"Solicitar Turno"}</h1>
                 <div>
                     <label>Nombre</label>
                     <input 
@@ -158,7 +153,7 @@ const CreateAppointment=({admin})=>{
                     </div>
                     
                     <input 
-                        type="text"
+                        type="tel"
                         name="phoneNumber"
                         placeholder="22334455"
                         inputMode="numeric"
@@ -186,12 +181,16 @@ const CreateAppointment=({admin})=>{
                 <div>
                     <label>Horario</label>
                     <select
-                        disabled={true}
+                        disabled={input.date_en===""}
                         name="time"
                         id="time"
                         value={input.time}
                         onChange={handleChange}
                     >
+                        <option value="" >Seleccione un horario</option>
+                        {availableTimes.map(t=>
+                            (<option key={t} value={t}>{t}</option>   
+                        ))}
                     </select>
                 </div>
                 <p>{errors.time}</p>
