@@ -23,12 +23,15 @@ const subscriptionWorker=async()=>{
     const register= await navigator.serviceWorker.register('/worker.js',{
         scope:'/'   
     })
-   
-    const subscription= await register.pushManager.subscribe({
+    let subscription;
+    try {
+        subscription= await register.pushManager.subscribe({
         userVisibleOnly:true,
         applicationServerKey:urlBase64ToUint8Array(PUBLIC_VAPID_KEY)
-    })    
-
+    }) 
+    } catch (error) {
+        throw Error("SW: " + error.message)
+    }
     return subscription;
 }
 
@@ -52,9 +55,22 @@ const LogIn=()=>{
         //si hay errores los guardo en el estado local
         try {
             //.unwrap() para poder capturar el error
-            await logIn(input).unwrap().then(r=>dispatch(setUser(r)))
-            const SW = await subscriptionWorker(); 
-            await subscription(SW);
+            const user=await logIn(input).unwrap()
+            dispatch(setUser(user))
+            console.log("login comp: " + user.id);
+            try {
+                //push subscription
+                const PS = await subscriptionWorker(); 
+                console.log("sw: " + PS);
+                
+                const subs=await subscription({PS,id:user.id});
+                console.log("subs: " + subs);
+                
+            } catch (error) {
+                console.log("Error de suscripcion: " + error.message);
+                
+            }
+            
             router.push("/Perfil")
 
         } catch (error) {    

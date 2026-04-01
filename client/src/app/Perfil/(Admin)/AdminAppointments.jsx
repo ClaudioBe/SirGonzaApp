@@ -1,52 +1,138 @@
 "use client"
-import React, { useEffect ,useState} from "react";
+import React, { useState} from "react";
 import {Table, Tag, Button,Modal } from "antd";
 import Reschedule from "./Reschedule";
 import styles from '@/ui/AdminAppointments.module.css'
 import CreateAppointment from "@/app/Turnos/page";
-import { useDeleteAppointmentMutation, useGetAppointmentsQuery, usePutAppointmentMutation } from "@/redux/services/appointmentApi";
+import { useDeleteAppointmentMutation, useDeleteOldAppointmentsMutation, useGetAppointmentsQuery, usePutAppointmentMutation } from "@/redux/services/appointmentApi";
+import { utils , writeFile} from "xlsx";
+import Swal from "sweetalert2";
 
 const AdminAppointments=()=>{
     const [isModalRescheduleOpen, setIsModalRescheduleOpen] = useState(false);
     const [isModalCreateOpen, setIsModalCreateOpen]=useState(false);
-   
- 
-    const handleCancelReschedule = () => {
-        setIsModalRescheduleOpen(false);
+    //estado local para guardar el usuario al reprogramar
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+
+    const openReschedule = (appointment) => {
+        setSelectedAppointment(appointment);
+        setIsModalRescheduleOpen(true);
     };
 
-    const handleCancelCreate=()=>{
-        setIsModalCreateOpen(false)
-    }
-
     const{data:appointments,isLoading,refetch}=useGetAppointmentsQuery();
+    const [deleteOldAppointments]=useDeleteOldAppointmentsMutation();
     const [updateAppointment]=usePutAppointmentMutation();
     const [deleteAppointment]=useDeleteAppointmentMutation();
-    const Appointments=appointments?.map(h=> ({...h,key:h.id}));
 
-    const handleAccept=async(id)=>{    
-        try {
-            //rtk query solo acepta un parametro, por eso debo pasarlo dentro de un objeto
-            await updateAppointment({confirmed:true,id}).unwrap()
-            //para que se refresquen los turnos con el que se acepto
-            refetch();
-        } catch (error) {
-            console.log(error.data);
-        }    
+    const handleAccept=(id,userId)=>{   
+        Swal.fire({
+            title: "¿Está seguro?",
+            text: "Marcarás el turno como aceptado",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "green",
+            cancelButtonColor: "red",
+            confirmButtonText: "Sí, aceptar"
+        }).then(async(result) => {
+            if (result.isConfirmed) {
+                try {
+                    //rtk query solo acepta un parametro, por eso debo pasarlo dentro de un objeto
+                    await updateAppointment({confirmed:true,id}).unwrap()
+                    //para que se refresquen los turnos con el que se acepto
+                    refetch();
+                    Swal.fire({
+                        title:"Has aceptado el Turno",
+                        text:userId!=null?"Se envió una notificación al cliente":"No se enviará notificacion, el cliente no está registrado",
+                        icon: "success",
+                        showCancelButton:false
+                    })
+                    } catch (error) {
+                        console.log(error.data);
+                    }    
+            }
+        })
+    }
+    const handleDelete=(id)=>{
+        Swal.fire({
+            title: "¿Está seguro?",
+            text: "Eliminarás el turno permanentemente",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "green",
+            cancelButtonColor: "red",
+            confirmButtonText: "Sí, eliminar"
+        }).then(async(result) => {
+            if(result.isConfirmed){
+                try {
+                    await deleteAppointment(id).unwrap()
+                    //para que se refresquen los turnos con el que se eliminó
+                    refetch()
+                    Swal.fire({
+                        title:"Se ha eliminado el turno",
+                        icon:"success",
+                        showCancelButton:false
+                    })
+                } catch (error) {
+                    console.log(error.data);
+                }
+
+            }
+        })
     }
 
-    const handleDelete=async(id)=>{
-        try {
-            await deleteAppointment(id).unwrap()
-            //para que se refresquen los turnos con el que se eliminó
-            refetch()
-        } catch (error) {
-            console.log(error.data);
-        }
-    }
+    const handleExport=async()=>{
+        //filtro los turnos que ya se hayan confirmado
+        const appointmentsAccepted=appointments
+                                    .filter(a=>a.confirmed===true)
+                                    // retorno las props importantes y en español 
+                                    .map(a=> {return {
+                                        Nombre: a.name,
+                                        Apellido:a.lastname,
+                                        Fecha: a.date_es,
+                                        Hora:a.time,
+                                        Numero_tel: a.phoneNumber
+                                    }})
+        //instancio un objeto de tipo Date
+        //lo paso a un formato mas simple y lo separo 
+        //para tomar solamente la fecha(año-mes-diaTHora)
+        const today=new Date().toISOString().split('T')[0];
+        
+        console.log(appointmentsAccepted);
+        
+        const wb = utils.book_new();
+        const ws = utils.json_to_sheet(appointmentsAccepted);
 
-    const handleClick=()=>{
-        setIsModalCreateOpen(true);
+        utils.book_append_sheet(wb,ws,today)
+
+        writeFile(wb, `${today}.xlsx`)
+
+        Swal.fire({
+            title:"¿Desea eliminar los turnos antiguos?",
+            text:"Se eliminarán los turnos de hace 30 días o más",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "green",
+            cancelButtonColor: "red",
+            confirmButtonText: "Sí, eliminar"
+            }).then(async(result)=>{
+                if(result.isConfirmed){
+                    try {
+                        const deleted=await deleteOldAppointments().unwrap()
+                        Swal.fire({
+                            title:`Se han eliminado ${deleted} registros de turnos`,
+                            icon:"success",
+                            showCancelButton:false
+                        })
+                        } catch (error) {
+                            Swal.fire({
+                                title:"Error",
+                                text:error.data,
+                                icon:"error",
+                                showCancelButton:false
+                            }) 
+                        } 
+                    }
+            })
     }
 
     const columns = [
@@ -82,49 +168,62 @@ const AdminAppointments=()=>{
             render:(time)=><p>{time}</p>
         },
         {
+            title:"Estado",
+            dataIndex:"confirmed",
+            key:"confirmed",
+            render:(confirmed)=><p>{confirmed?"Aceptado":"Pendiente"}</p>
+        },
+        {
             title:"Acciones",
             dataIndex:"actions",
             key:"actions",
-            render:(_, {id,name,lastname,time,date_es,confirmed,phoneNumber})=>
-                    <div className={styles.actionsContainer}>
-                        {confirmed
-                            ? <p>Aceptado!</p>   
+            //render recibe 3 args=> (text #lo que haya en la prop de key#,
+            // record #el obj de la fila#, index #numero de fila#)
+            //poner _ como arg significa que no voy a usar ese arg
+            render:(_, appointment)=>{
+                    const {key,...Appointment}=appointment;
+                    return <div className={styles.actionsContainer}>
+                        {appointment.confirmed
+                            ? <></>
                             : <>
-                                <Tag className={styles.tag} onClick={()=>setIsModalRescheduleOpen(true)}>Reprogramar</Tag>
-                                <Modal
-                                    title="Reprogramar"
-                                    closable={{ 'aria-label': 'Custom Close Button' }}
-                                    open={isModalRescheduleOpen}
-                                    onCancel={handleCancelReschedule}
-                                    footer={[]}
-                                >
-                                    <Reschedule 
-                                        id={id}
-                                        name={name}
-                                        lastname={lastname}
-                                        time={time}
-                                        date_es={date_es}
-                                        phoneNumber={phoneNumber}
-                                    />
-                                </Modal>
-                                <Tag className={styles.tag} color='green' onClick={()=>handleAccept(id)}>Aceptar</Tag>
+                                <Tag className={styles.tag} onClick={()=>openReschedule(Appointment)}>Reprogramar</Tag>
+                               
+                                <Tag className={styles.tag} color='green' onClick={()=>handleAccept(appointment.id,appointment.userId)}>Aceptar</Tag>
                             </>}
-                            <Tag className={styles.tag} color='red' onClick={()=>(handleDelete(id))}>Eliminar</Tag>
-                    </div>
-                
+                            <Tag className={styles.tag} color='red' onClick={()=>(handleDelete(appointment.id))}>Eliminar</Tag>
+                    </div>   
+            }
         }
     ]  
 
     return (
         <div>
-            <Table columns={columns} dataSource={Appointments} />
-            <Button onClick={handleClick}>Agendar turno</Button>
-            
+            {/* hago el mapeo para ponerle un key a cada appointment para antd*/}
+            <Table columns={columns} dataSource={appointments?.map(h=> ({...h,key:h.id}))} />
+            <Button onClick={()=>setIsModalCreateOpen(true)}>Agendar turno</Button>
+            <Button onClick={handleExport}>Descargar excel</Button>
+            <Modal
+                title="Reprogramar"
+                open={isModalRescheduleOpen}
+                onCancel={() => setIsModalRescheduleOpen(false)}
+                footer={null}
+            >
+                {selectedAppointment && (
+                    <Reschedule 
+                        key={selectedAppointment.id}
+                        {...selectedAppointment}
+                        //le paso la funcion para cerrar el modal por prop
+                        closeModal={()=>setIsModalRescheduleOpen(false)}
+                        refetch={refetch}
+                    />
+                )}
+                    
+            </Modal>
             <Modal
                 title={null}
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalCreateOpen}
-                onCancel={handleCancelCreate}
+                onCancel={()=>setIsModalCreateOpen(false)}
                 footer={null}
             >
                 <CreateAppointment admin={true} accept={handleAccept}/>

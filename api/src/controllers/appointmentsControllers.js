@@ -1,10 +1,12 @@
 const {Appointment, Notification,User}=require('../db');
+const{Op}=require('sequelize')
 const {sendPush}=require('../utils/webPush');
 const regexLetters = RegExp(/^[A-Za-z\s]+$/);
 const regexNumbers= RegExp(/^[0-9]*$/)
 
 const getAppointments=async()=>{
-    return await Appointment.findAll();
+    //retorno todos los turnos, del mas viejo al mas nuevo
+    return await Appointment.findAll({order:[["date_en",'ASC']]});
 }
 
 const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
@@ -39,8 +41,8 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
     
     phoneNumber=`54911${phoneNumber}`;
     
-    // //formateo la fecha a: dd/mm/aa
-    const date_es=format(new Date(date_en),'es').substring(0,4);
+    // //formateo la fecha a: dd/mm
+    const date_es=format(new Date(date_en),'es')
     // const message=`¡Hola ${name}! Tu solicitud de turno para el ${date_es} a las ${time}\
     // ha sido recibida con éxito. A la brevedad se confirmará tu turno. Muchas Gracias 👋`
     // sendWhatsapp(phoneNumber,message)
@@ -51,7 +53,7 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
     const admin = await User.findOne({ where: {admin:true} });
 
     const title="¡Nueva solicitud de Turno!";
-    const message=`Cliente: ${name}` + " "+ lastname
+    const message=`Cliente: ${name} ` + lastname
 
     //envio al admin la notificacion
     if(admin.pushSubscription)await sendPush(admin.pushSubscription,title,message );
@@ -68,7 +70,7 @@ const putAppointment=async(updateAppointment,id)=>{
     if(appointment.userId && updateAppointment.confirmed){
         const user = await User.findByPk(appointment.userId);
         if(user && user.pushSubscription){
-            const message=`Tu turno del ${appointment.date_es} fue confirmado`;
+            const message=`Tu turno del ${appointment.date_es} a las ${time}hs fue confirmado`;
             const title="¡Turno Confirmado!";
 
             //guardo la notificacion en la bbdd
@@ -76,6 +78,7 @@ const putAppointment=async(updateAppointment,id)=>{
             await sendPush(user.pushSubscription,title, message)
         }
     }
+    console.log(JSON.stringify(updateAppointment));
     
     // if(updateAppointment.confirmed==true) await sendWhatsapp({phoneNumber,message:`Turno del ${date_es} a las ${time} aceptado!`})
     return update;
@@ -89,14 +92,34 @@ const deleteAppointment=async(id)=>{
     return `El turno ${id} ha sido eliminado`;
 }
 
+const deleteOldAppointments=async()=>{
+    //instancio un objeto tipo date
+    const limitDate= new Date()
+    //le resto 30 dias
+    limitDate.setDate(limitDate.getDate() - 30)
+    //lo parseo a string y lo divido para agarrar solo la fecha
+    const dateString= limitDate.toISOString().split('T')[0];
+    
+    //destroy retorna la cantidad de registros eliminados
+    const deletedRegisters=await Appointment.destroy({where:{date_en:{[Op.lt]:dateString}}});
+    if(deletedRegisters===0) throw Error("No existen registros de turnos antiguos ")
+
+    return `${deletedRegisters} registros de turnos han sido eliminados`;
+}
+
 //para formatear la fecha de 'en' a 'es'
-const format=(date,locale,options)=> {
+const format=(date,locale)=> {
     //al formatearla se le resta un dia, por eso...
     date.setDate(date.getDate()+1);
+    //para que solo devuelva dia y mes
+    const options = {
+        day:"numeric",
+        month:"numeric",
+    }
     return new Intl.DateTimeFormat(locale,options).format(date);
 };
 
 
 module.exports={
-    getAppointments,postAppointment,putAppointment,deleteAppointment
+    getAppointments,postAppointment,putAppointment,deleteAppointment, deleteOldAppointments
 }

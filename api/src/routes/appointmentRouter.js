@@ -4,7 +4,8 @@ const{
     getAppointments,
     putAppointment,
     postAppointment,
-    deleteAppointment
+    deleteAppointment,
+    deleteOldAppointments
 } = require('../controllers/appointmentsControllers')
 
 const {verifyTokenAdmin}=require('../middlewares/authJwt');
@@ -40,6 +41,15 @@ appointmentRouter.delete('/:id',verifyTokenAdmin,async(req,res)=>{
     try {
         const deleted=await deleteAppointment(req.params.id);
         res.status(201).json(deleted)
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
+}),
+
+appointmentRouter.delete('/',verifyTokenAdmin,async(req,res)=>{
+    try {
+        const deleted=await deleteOldAppointments();
+        res.status(201).json(deleted);
     } catch (error) {
         res.status(400).send(error.message)
     }

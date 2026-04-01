@@ -18,7 +18,7 @@ const verifyToken=(admin)=>async (req,res,next)=>{
         //si es para ls rutas que requieren ser administrador y el usuario no lo es:...
         if(admin) {if(!user.admin) return res.status(400).send("Necesita permisos de administrador")}
 
-        //si es para la ruta para editar el usuario y no es el perfil del usuario logueado:...
+        //si es para las rutas de usuarios q no son admin 
         else if(user.id!=req.params.id) return res.status(400).send("Este no es su usuario");
         
         next()
@@ -29,6 +29,6 @@ const verifyToken=(admin)=>async (req,res,next)=>{
 }
 const verifyTokenAdmin= verifyToken(true);
 
-const verifyTokenProfile=verifyToken(false);
+const verifyTokenUser=verifyToken(false);
 
-module.exports ={verifyTokenAdmin,verifyTokenProfile}
+module.exports ={verifyTokenAdmin,verifyTokenUser}

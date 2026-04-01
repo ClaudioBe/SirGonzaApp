@@ -1,4 +1,3 @@
-import '@ant-design/v5-patch-for-react-19'; //para compatibilidad de antd con react 19
 import StoreProvider from "@/redux/StoreProvider";
 import NavBar from "./NavBar";
 import 'bootstrap/dist/css/bootstrap.min.css'

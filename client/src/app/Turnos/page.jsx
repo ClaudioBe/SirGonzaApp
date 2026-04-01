@@ -85,8 +85,6 @@ const CreateAppointment=({admin})=>{
             swal.fire({
                 title:admin?"Turno agendado!":"Se ha enviado tu solicitud!",
                 icon: 'success',
-                timer:1000,
-                iconColor:'green'
             })  
             
             setInput({
@@ -95,8 +93,8 @@ const CreateAppointment=({admin})=>{
                 name:"",
                 lastname:"",
                 phoneNumber:""
-
             })
+            
             setErrors({
                 time:"",
                 date_en:"",
