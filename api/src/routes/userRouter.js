@@ -51,8 +51,7 @@ userRouter.post('/admin/logout',async(req,res)=>{
 userRouter.post('/signUp',async(req,res)=>{
     try {
         const user =await signUp(req.body);
-        const{password,admin,...publicUser}=result.user;
-        res.status(200).json(publicUser);
+        res.status(200).json(user)
     } catch (error) {
         //parseo el string a Object para poder manejarlo despues en la action..
         res.status(400).json(error.message);
@@ -91,7 +90,7 @@ userRouter.put('/changePassword/:id',verifyTokenUser,async(req,res)=>{
 })
 
 //ruta get de admin para solicitar los datos de los usuarios
-userRouter.get('/admin',verifyTokenAdmin,async (req,res)=>{
+userRouter.get('/',verifyTokenAdmin,async (req,res)=>{
     try {
         const users=await getUsers();
         res.status(201).json(users)
