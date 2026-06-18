@@ -1,9 +1,5 @@
 "use client";
-
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-
 import Image from "next/image";
 
 import {
@@ -14,7 +10,7 @@ import {
     Card,
     Button,
     Flex,
-    Space,
+    Space
 } from "antd";
 
 import {
@@ -30,12 +26,6 @@ const { Title, Paragraph } = Typography;
 
 const Home = () => {
     const router = useRouter();
-    const admin = useSelector((state) => state.user.admin);
-
-    useEffect(() => {
-        if (admin) router.push("/Perfil");
-    }, [admin, router]);
-
     return (
         <Layout className={styles.layout}>
             <Content className={styles.content}>

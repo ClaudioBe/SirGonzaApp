@@ -4,14 +4,14 @@ import styles from '@/ui/Dashboard.module.css';
 import {useRouter} from "next/navigation";
 import DashboardAdmin from './(Admin)/DashboardAdmin'
 import CreateAppointment from "../Turnos/page"
-import { useLogOutMutation } from '@/redux/services/userApi';
+import { useLogOut } from '../hooks/useLogOut';
 import { useSelector } from 'react-redux';
 import { Menu, Modal } from 'antd';
 import { BellOutlined, CalendarOutlined, PoweroffOutlined} from '@ant-design/icons';
 import Notifications from './(Admin)/Notifications'
 
 function Profile() {
-    const [logOut]=useLogOutMutation();
+    const {logout}=useLogOut();
     const [isModalRescheduleOpen, setIsModalRescheduleOpen] = useState(false);
 
     const router=useRouter()
@@ -21,7 +21,6 @@ function Profile() {
     //al renderizar el componente si el usuario es nulo se redirige al inicio despues de retornar null
     useEffect(()=>{if(user==null) router.push('/')},[])
     
-
     //items del menú de antd en un array 
     const items = [
         {
@@ -51,7 +50,7 @@ function Profile() {
             icon: <PoweroffOutlined />,
             label: 'Cerrar Sesion',
             danger: true,
-            onClick: () => logOut() && router.push('/IniciarSesion'),
+            onClick: () => logout(),
         },
     ];
     if(user==null) return null;

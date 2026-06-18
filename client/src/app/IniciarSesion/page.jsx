@@ -1,11 +1,9 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import { useLogInMutation ,useSubscriptionMutation} from "@/redux/services/userApi";
 import styles from "@/ui/Form.module.css";
 import { useRouter } from 'next/navigation';
 import swal from "sweetalert2";
-import { useDispatch } from "react-redux";
-import { logout, setUser } from "@/redux/features/userSlice";
 const PUBLIC_VAPID_KEY='BLi0bbWUXw3MjOQayCJ7T1_NhkSL-ypZ3R_GoTVQZM9Azs2Wex9m3abZ9HDRGMOahe02VlJgWAwbiXjpSrzm9zI'
 
 //para convertir el PUBLIC_VAPID_KEY de string a Uint8Array
@@ -42,9 +40,7 @@ const LogIn=()=>{
     const[logIn]=useLogInMutation();
     const[subscription]=useSubscriptionMutation();
     const router=useRouter();
-    const dispatch=useDispatch();
     
-    useEffect(()=>{dispatch(logout())},[dispatch])
     const handleChange=(e)=>{
         setInput({...input,[e.target.name]:e.target.value});
     }
@@ -56,16 +52,10 @@ const LogIn=()=>{
         try {
             //.unwrap() para poder capturar el error
             const user=await logIn(input).unwrap()
-            dispatch(setUser(user))
-            console.log("login comp: " + user.id);
             try {
                 //push subscription
                 const PS = await subscriptionWorker(); 
-                console.log("sw: " + PS);
-                
                 const subs=await subscription({PS,id:user.id});
-                console.log("subs: " + subs);
-                
             } catch (error) {
                 console.log("Error de suscripcion: " + error.message);
                 

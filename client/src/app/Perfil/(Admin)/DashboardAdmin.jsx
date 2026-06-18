@@ -6,10 +6,10 @@ import { BellOutlined, CalendarOutlined, PoweroffOutlined, UserOutlined} from '@
 import AdminAppointments from './AdminAppointments';
 import Users from "./Users"
 import Notifications from './Notifications'
-import { useLogOutMutation } from '@/redux/services/userApi';
+import { useLogOut } from '@/app/hooks/useLogOut';
 
 const DashboardAdmin = () => {
-    const [logOut]=useLogOutMutation()
+    const {logout}=useLogOut()
     const router = useRouter();
 
     //items del menú de antd en un array 
@@ -67,7 +67,7 @@ const DashboardAdmin = () => {
             icon: <PoweroffOutlined />,
             label: 'Cerrar Sesion',
             danger: true,
-            onClick: () => logOut() && router.push('/IniciarSesion'),
+            onClick: () => logout(),
         },
     ];
 

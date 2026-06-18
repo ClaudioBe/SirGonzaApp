@@ -45,7 +45,7 @@ userRouter.post('/admin/logout',async(req,res)=>{
         sameSite:'lax',
         secure:false
     })
-    .status(200).send("Sesión Cerrada")
+    .status(200).json("Sesión Cerrada")
 })
 //ruta post para registrarse
 userRouter.post('/signUp',async(req,res)=>{
