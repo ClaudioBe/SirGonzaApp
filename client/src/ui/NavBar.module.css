@@ -10,3 +10,7 @@
 .link:hover{
     text-shadow:0 0 0.2em green;
 }
+
+.img{
+    height:2em
+}

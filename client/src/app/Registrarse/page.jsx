@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import {useRouter} from "next/navigation"
 import { useSignUpMutation } from '@/redux/services/userApi';
-import styles from '@/ui/Register.module.css';
+import styles from '@/ui/Form.module.css';
 import swal from 'sweetalert2'
 
 function Register() {
+    const[signUp]=useSignUpMutation();
     const[input,setInput]=useState({
         userName:"",
         name:"",
@@ -28,7 +29,7 @@ function Register() {
         //si hay errores los guardo en el estado local
         try {
             //uso await para que espere a que se resuelva la promesa...
-            await useSignUpMutation(input).unwrap();
+            await signUp(input).unwrap();
             swal.fire({
                 title:"Se ha registrado el usuario!",
                 icon: 'success',
@@ -37,7 +38,9 @@ function Register() {
             }) 
             router.push("/IniciarSesion");
         } catch (error) {
-            setErrors(JSON.stringify(error));
+            console.log("error: " + error);
+            
+            setErrors(JSON.parse(error.data));
             swal.fire({
                 title: "Hay errores!",
                 icon:'error',
@@ -53,13 +56,13 @@ function Register() {
                 <h1>Registrarse</h1>
                 <div>
                     <label>Nombre: </label>
-                    <input type="text" name="name" onChange={handleChange}/>
+                    <input type="text" name="name" value={input.name} onChange={handleChange}/>
                 </div>
                 <p>{errors.name}</p>
 
                 <div>
                     <label>Apellido: </label>
-                    <input type="text" name="lastname" onChange={handleChange}/>
+                    <input type="text" name="lastname" value={input.lastname} onChange={handleChange}/>
                 </div>
                 <p>{errors.lastname}</p>
                 
@@ -68,21 +71,21 @@ function Register() {
                         <label>Numero de celular: </label>
                         <label>11</label>
                     </div>
-                    <input type="number" name="phoneNumber" placeholder='22334455' onChange={handleChange}/>
+                    <input type="number" name="phoneNumber" value={input.phoneNumber} placeholder='22334455' onChange={handleChange}/>
                 </div>
                 <p>{errors.phoneNumber}</p>
 
                 <div>
                     <label>Nombre de usuario: </label>
-                    <input type="text" name="userName" onChange={handleChange}/>
+                    <input type="text" name="userName" value={input.userName} onChange={handleChange}/>
                 </div>
                 <p>{errors.userName}</p>
 
                 <div>
                    <label>Contraseña: </label>
-                    <input type="password" name="password" onChange={handleChange}/> 
+                    <input type="password" name="password" value={input.password} onChange={handleChange}/> 
                 </div>
-                <p>{errors.phoneNumber}</p>
+                <p>{errors.password}</p>
                 
                 <button type="submit">Crear usuario</button>
             </form> 

@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { useLogInMutation ,useSubscriptionMutation} from "@/redux/services/userApi";
-import styles from "@/ui/LogIn.module.css";
+import styles from "@/ui/Form.module.css";
 import { useRouter } from 'next/navigation';
 import swal from "sweetalert2";
 import { useDispatch } from "react-redux";

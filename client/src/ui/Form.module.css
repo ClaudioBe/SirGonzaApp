@@ -1,0 +1,177 @@
+.container{
+    min-height: 100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.form{
+    background-image: url(/assets/icon.png);
+    background-color:black; 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width:100%;
+    max-width:500px;
+    
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    padding:2rem;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.3);
+}
+
+.form h1{
+    color:white;
+    font-family:'Roboto', sans-serif;
+    text-align:center;
+    margin-bottom:1rem;
+}
+
+.form > div{
+    display:flex;
+    align-items:center;
+    background-color:#888888;
+    border-radius:12px;
+    border:2px solid black;
+    overflow:hidden;
+}
+
+.form > div > label{
+    width:40%;
+    padding:0.8rem;
+    font-style:italic;
+    color:black;
+    text-align:center;
+    font-weight:bold;
+}
+
+.form input{
+    width:60%;
+    border:none;
+    outline:none;
+    padding:0.9rem;
+    font-size:1rem;
+}
+
+.form div div{
+    display:flex;
+    width:40%;
+}
+
+.form div div :first-child{
+    flex:1;
+    text-align:center;
+    margin:auto;
+    font-style:italic;
+    color:black;
+}
+
+.form div div :last-child{
+    flex:1;
+    border-left:2px solid black;
+    text-align:center;
+    margin:auto;
+    color:black;
+}
+
+.form p {
+    color: #ff3333;
+    font-weight: bold;
+    font-size: 0.85rem;
+    grid-column-start: span 5;
+    
+    /* Fondo oscuro */
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 6px;
+    width: fit-content;
+    
+    /* REAJUSTE DE ALINEACIÓN CRÍTICO */
+    display: inline-flex;       /* Activa flexbox interno para alinear texto y fondo */
+    align-items: center;        /* Centra el texto verticalmente de forma matemática */
+    justify-content: center;    /* Centra el texto horizontalmente */
+    
+    /* Espaciados limpios sin saltos */
+    padding: 4px 10px;          /* Espaciado interno equilibrado (arriba/abajo e izquierda/derecha) */
+    margin: 4px 0 10px 0;       /* Margen superior positivo para que baje y se separe del input */
+    line-height: 1;             /* Elimina el espacio extra invisible que las tipografías traen abajo */
+}
+
+/* Evita que el bloque fantasma aparezca vacío */
+.form p:empty {
+    display: none;
+}
+
+
+.form button{
+    background-color:#6e6e6e;
+    border:none;
+    padding:1rem;
+    border-radius:12px;
+    color:white;
+    font-size:1rem;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.form button:hover{
+    background-color:#8a8a8a;
+}
+
+.form h1 {
+  grid-column-start: span 5;
+  color: #fff; /* Color del centro de la letra (blanco para que resalte) */
+  font-family: sans-serif; /* O una fuente similar a la del logo */
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  
+  /* neon varias capas de sombras */
+  text-shadow: 
+    0 0 5px #1eca00,   /* Resplandor interno */
+    0 0 10px #1eca00,  /* Brillo medio */
+    0 0 20px #1eca00,  /* Brillo extendido */
+    0 0 40px #008000;  /* Sombra verde oscura de fondo */
+  animation: flicker 2s infinite alternate;
+}
+
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.form p{
+    margin-top: 0;
+    color:red;
+    grid-column-start: span 5;
+    height: 1em;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px){
+
+    .form{
+        padding:1.2rem;
+    }
+
+    .form > div{
+        flex-direction:column;
+    }
+
+    .form > div > label{
+        width:100%;
+        border-bottom:2px solid black;
+    }
+
+    .form input{
+        width:100%;
+    }
+
+    .form div div{
+        width:100%;
+    }
+}

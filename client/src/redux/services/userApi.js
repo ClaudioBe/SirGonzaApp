@@ -10,10 +10,10 @@ export const userApi = createApi({
     endpoints:(builder)=>({
         //query es como unn get en axios o fetch
             getUsers: builder.query({
-                query:(token)=>`admin/${token}`
+                query:()=>""
             }),
             getUserById: builder.query({
-                query:(id,token)=>`${id}/${token}`
+                query:(id)=>`${id}`
             }),
             signUp: builder.mutation({
                 query:(newUser)=>({
@@ -37,14 +37,14 @@ export const userApi = createApi({
                 })
             }),
             deleteUser: builder.mutation({
-                query:(id,token)=>({
-                    url:`${id}/${token}`,
+                query:(id)=>({
+                    url:`${id}`,
                     method:"DELETE",
                 })
             }),
             deleteUserForAdmin: builder.mutation({
-                query:(id,token)=>({
-                    url:`admin/${id}/${token}`,
+                query:(id)=>({
+                    url:`admin/${id}`,
                     method:"DELETE",
                 })
             }),
@@ -59,5 +59,5 @@ export const userApi = createApi({
 })
 
 export const {
-    useGetUsers,useGetUserById,useLogInMutation,useLogOutMutation,useSignUpMutation,
+    useGetUsersQuery,useGetUserByIdQuery,useLogInMutation,useLogOutMutation,useSignUpMutation,
     useDeleteUserForAdminMutation,useDeleteUserMutation,useSubscriptionMutation}=userApi;

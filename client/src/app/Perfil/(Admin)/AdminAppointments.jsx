@@ -1,7 +1,6 @@
 "use client"
 import React, { useState} from "react";
 import {Table, Tag, Button,Modal } from "antd";
-import Reschedule from "./Reschedule";
 import styles from '@/ui/AdminAppointments.module.css'
 import CreateAppointment from "@/app/Turnos/page";
 import { useDeleteAppointmentMutation, useDeleteOldAppointmentsMutation, useGetAppointmentsQuery, usePutAppointmentMutation } from "@/redux/services/appointmentApi";
@@ -20,6 +19,8 @@ const AdminAppointments=()=>{
     };
 
     const{data:appointments,isLoading,refetch}=useGetAppointmentsQuery();
+    console.log("turnos" + appointments);
+    
     const [deleteOldAppointments]=useDeleteOldAppointmentsMutation();
     const [updateAppointment]=usePutAppointmentMutation();
     const [deleteAppointment]=useDeleteAppointmentMutation();
@@ -75,7 +76,6 @@ const AdminAppointments=()=>{
                 } catch (error) {
                     console.log(error.data);
                 }
-
             }
         })
     }
@@ -96,8 +96,6 @@ const AdminAppointments=()=>{
         //lo paso a un formato mas simple y lo separo 
         //para tomar solamente la fecha(año-mes-diaTHora)
         const today=new Date().toISOString().split('T')[0];
-        
-        console.log(appointmentsAccepted);
         
         const wb = utils.book_new();
         const ws = utils.json_to_sheet(appointmentsAccepted);
@@ -203,17 +201,19 @@ const AdminAppointments=()=>{
             <Button onClick={()=>setIsModalCreateOpen(true)}>Agendar turno</Button>
             <Button onClick={handleExport}>Descargar excel</Button>
             <Modal
-                title="Reprogramar"
+                title={null}
                 open={isModalRescheduleOpen}
                 onCancel={() => setIsModalRescheduleOpen(false)}
                 footer={null}
             >
                 {selectedAppointment && (
-                    <Reschedule 
+                    <CreateAppointment 
                         key={selectedAppointment.id}
-                        {...selectedAppointment}
+                        appointment={selectedAppointment}
                         //le paso la funcion para cerrar el modal por prop
                         closeModal={()=>setIsModalRescheduleOpen(false)}
+                        isToEdit={true}
+                        admin={true}
                         refetch={refetch}
                     />
                 )}

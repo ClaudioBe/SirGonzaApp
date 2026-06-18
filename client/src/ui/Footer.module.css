@@ -1,0 +1,86 @@
+.footer {
+    background-color: #0c0c0c !important;
+    padding: 3rem 2rem 1.5rem 2rem !important;
+    border-top: 1px solid #1a1a1a;
+}
+
+.footerTitle {
+    color: #1eca00 !important;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 1rem !important;
+}
+
+.footerText {
+    color: #aaaaaa !important;
+    font-size: 0.9rem;
+}
+
+.footerLink {
+    color: #ffffff !important;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footerLink:hover {
+    color: #1eca00 !important;
+}
+
+.footerCopy {
+    color: #555555 !important;
+    font-size: 0.8rem;
+}
+
+.footerBottomRow {
+    margin-top: 2rem;
+    border-top: 1px solid #222;
+    padding-top: 1rem;
+}
+
+/* Alineación para computadoras (por defecto) */
+.copyrightCol {
+    text-align: left;
+}
+
+.developerCol {
+    text-align: right;
+}
+
+.devSpace {
+    justify-content: flex-end; /* iconos a la derecha en PC */
+}
+
+.devLink {
+    color: #1eca00 !important; /* verde neón */
+    font-size: 1.1rem; 
+    transition: transform 0.2s, opacity 0.2s;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.5rem;
+}
+
+.devLink:hover {
+    opacity: 0.8;
+    transform: scale(1.1); /* Efecto visual sutil al pasar el mouse */
+}
+
+/* --- RESPONSIVE: Celulares y Pantallas Chicas --- */
+@media (max-width: 576px) {
+    .copyrightCol,
+    .developerCol {
+        text-align: center !important; /* Centra todo el texto en celulares */
+    }
+
+    .developerCol {
+        margin-top: 0.75rem; /* espacio arriba para que no se pegue al copyright */
+    }
+
+    .devSpace {
+        width: 100%;
+        justify-content: center; /* redes centradas */
+    }
+}

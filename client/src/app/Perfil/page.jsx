@@ -1,34 +1,84 @@
 "use client"
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import styles from '@/ui/Dashboard.module.css';
 import {useRouter} from "next/navigation";
-import DashboardAdmin from './(Admin)/DashboardAdmin';
+import DashboardAdmin from './(Admin)/DashboardAdmin'
+import CreateAppointment from "../Turnos/page"
 import { useLogOutMutation } from '@/redux/services/userApi';
 import { useSelector } from 'react-redux';
+import { Menu, Modal } from 'antd';
+import { BellOutlined, CalendarOutlined, PoweroffOutlined} from '@ant-design/icons';
+import Notifications from './(Admin)/Notifications'
 
 function Profile() {
     const [logOut]=useLogOutMutation();
+    const [isModalRescheduleOpen, setIsModalRescheduleOpen] = useState(false);
+
     const router=useRouter()
     //obtengo los datos del usuario guardado en el estado de redux
-    const user= useSelector(state=>state.user)  
+    const user= useSelector(state=>state.user.user)  
 
     //al renderizar el componente si el usuario es nulo se redirige al inicio despues de retornar null
     useEffect(()=>{if(user==null) router.push('/')},[])
-    const handleClick=()=>{
-        logOut()
-        router.push('/IniciarSesion')
-    }
     
+
+    //items del menú de antd en un array 
+    const items = [
+        {
+            key:'appointment',
+            icon:<CalendarOutlined/>,
+            label:"Solicitar turno",
+            onClick:()=>setIsModalRescheduleOpen(true)
+        }, 
+        {
+            key:'notifications_submenu',
+            icon:<BellOutlined/>,
+            label:"Notificaciones",
+            children:[
+                {
+                    key:"notifications_content",
+                    label:(
+                        <div style={{padding:"1%"}}>
+                            <Notifications/> 
+                        </div>
+                    ),
+                    type:'group'
+                }
+            ]
+        },
+        {
+            key: 'logOut',
+            icon: <PoweroffOutlined />,
+            label: 'Cerrar Sesion',
+            danger: true,
+            onClick: () => logOut() && router.push('/IniciarSesion'),
+        },
+    ];
     if(user==null) return null;
 
     return user?.admin
             ? <DashboardAdmin/>
-            :(<div>
-                <h1>{user.name}</h1>
-                <h1>{user.lastname}</h1>
-                <h2>{user.userName}</h2>
-                <h2>{user.phoneNumber}</h2>
-                <button onClick={handleClick}>Cerrar Sesion</button>
-            </div>)
+            :<div>
+                <Menu 
+                    className={styles.container} 
+                    mode="inline" 
+                    items={items} 
+                />
+                <Modal
+                    title={null}
+                    open={isModalRescheduleOpen}
+                    onCancel={() => setIsModalRescheduleOpen(false)}
+                    footer={null}
+                >
+                    <CreateAppointment
+                        key={user.id}
+                        appointment={user}
+                        isUser={true}
+                        //le paso la funcion para cerrar el modal por prop
+                        closeModal={()=>setIsModalRescheduleOpen(false)}
+                    />
+                </Modal>
+            </div>
 }
 
 export default Profile;
