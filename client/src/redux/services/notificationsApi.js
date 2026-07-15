@@ -20,7 +20,7 @@ export const notificationsApi = createApi({
             }),
             deleteAllNotifications: builder.mutation({
                 query:(userId)=>({
-                    url:`${userId}`,
+                    url:`all/${userId}`,
                     method:"DELETE"
                 })
             })

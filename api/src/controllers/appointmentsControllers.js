@@ -9,7 +9,7 @@ const getAppointments=async()=>{
     return await Appointment.findAll({order:[["date_en",'ASC']]});
 }
 
-const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
+const postAppointment=async({name,lastname,phoneNumber,time,date_en,userId})=>{
     const errors={}
             
     if(name=="") errors.name="Debe ingresar su nombre";
@@ -48,7 +48,7 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en})=>{
     // sendWhatsapp(phoneNumber,message)
 
     //se guarda el turno en la bbdd
-    const newAppointment=await Appointment.create({name,lastname,time,phoneNumber,date_en,date_es});
+    const newAppointment=await Appointment.create({name,lastname,time,phoneNumber,date_en,date_es,userId});
     //Encuentro al admin 
     const admin = await User.findOne({ where: {admin:true} });
 
@@ -91,6 +91,11 @@ const deleteAppointment=async(id)=>{
 
     return `El turno ${id} ha sido eliminado`;
 }
+const deleteAllAppointments=async()=>{
+    const deletedRegisters=await Appointment.destroy({where:{}});
+    if(deletedRegisters===0)throw Error("No existen registros de turnos");
+    return `${deletedRegisters} registros de turnos han sido eliminados`;
+}
 
 const deleteOldAppointments=async()=>{
     //instancio un objeto tipo date
@@ -121,5 +126,5 @@ const format=(date,locale)=> {
 
 
 module.exports={
-    getAppointments,postAppointment,putAppointment,deleteAppointment, deleteOldAppointments
+    getAppointments,postAppointment,putAppointment,deleteAppointment,deleteAllAppointments, deleteOldAppointments
 }

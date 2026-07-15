@@ -71,7 +71,7 @@ function Profile() {
                 >
                     <CreateAppointment
                         key={user.id}
-                        appointment={user}
+                        appointment={{userId:user.id,...user}}
                         isUser={true}
                         //le paso la funcion para cerrar el modal por prop
                         closeModal={()=>setIsModalRescheduleOpen(false)}

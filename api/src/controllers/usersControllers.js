@@ -164,6 +164,11 @@ const deleteUser=async(id)=>{
     return `El usuario ${id} ha sido eliminado`;
 }
 
+const deleteAllUsers=async(id)=>{
+    const deleted=await User.destroy({where:{admin:false}})
+    if(deleted.length===0) throw Error ("No existen usuarios registrados");
+    return `${deleted} usuarios han sido eliminados`
+}
 module.exports={
     logIn,
     signUp,
@@ -172,5 +177,6 @@ module.exports={
     getUser,
     createAdmin,
     changePassword,
-    deleteUser
+    deleteUser,
+    deleteAllUsers
 }

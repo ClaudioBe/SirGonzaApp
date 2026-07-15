@@ -1,5 +1,5 @@
 import React from "react";
-import {Table, Tag, Empty, Spin } from "antd";
+import {Table, Tag, Empty, Spin, Button } from "antd";
 import { useSelector } from "react-redux";
 import { useGetNotificationsQuery,useDeleteAllNotificationsMutation, useDeleteNotificationMutation } from "@/redux/services/notificationsApi";
 import styles from '@/ui/Users.module.css';
@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 const Notifications=()=>{
     const id = useSelector(state=>state.user.user.id);
     const[deleteNotification]=useDeleteNotificationMutation()
+    const[deleteAllNotification]=useDeleteAllNotificationsMutation()
     const{data,isLoading,isError,refetch}=useGetNotificationsQuery(id);
     // 1. Mientras carga, mostramos un spinner
     if (isLoading) return <div style={{ textAlign: 'center', padding: '20px' }}><Spin/></div>;
@@ -15,8 +16,34 @@ const Notifications=()=>{
     //Si hay un error o no hay data 
     if (isError || !data) return <Empty description="No hay notificaciones" />;
 
+    const handleDeleteAll=()=>{
+        Swal.fire({
+            title:"¿Estás seguro?",
+            text:"Eliminarás todas las notificaciones permanentemente",
+            icon:"warning",
+            showCancelButton:true,
+            cancelButtonColor:"red",
+            confirmButtonColor:"green",
+            confirmButtonText:"Sí, eliminar"
+        }).then(async(result)=>{
+            if(result.isConfirmed){
+                try {
+                    await deleteAllNotification(id).unwrap();
+                    refetch()
+                    Swal.fire({
+                        title:"Se han eliminado todas las notificaciones",
+                        icon:"success",
+                        showCancelButton:false
+                    })
+                } catch (error) {
+                    console.log("Error al borrar todas las notis: " + error.data);
+                    
+                }
+            }
+        })
+    }
 
-    const notifications=data?.map(u=> ({...u,key:u.id}));
+    const notifications=data?.map((u,index)=> ({...u,key:u.id,number:index+1}));
 
     const handleDelete=(id)=>{
             Swal.fire({
@@ -47,10 +74,11 @@ const Notifications=()=>{
     
     const columns = [
         {
-            title: "Id",
-            dataIndex: "id",
-            sorter: (a, b) => a.id - b.id,
-            key: "id",
+            title: "Nº",
+            dataIndex: "number",
+            key: "number",
+            sorter: (a, b) => a.number - b.number,
+            sortDirections:["ascend","descend","ascend"],
             render: (text) => <p>{text}</p>,
         },
         {
@@ -79,38 +107,10 @@ const Notifications=()=>{
 
     return (
         <div>
-            <Table columns={columns} dataSource={notifications} />
+            <Table columns={columns} dataSource={notifications} scroll={{x:2}}/>
+            <Button onClick={handleDeleteAll} danger disabled={notifications?.length===0}>Eliminar todas</Button>
         </div>
     );
 }
 
 export default Notifications;
-
-
-
-
-// import { useGetNotificationsQuery } from '@/redux/services/notificationsApi';
-// import React from 'react';
-// import {Empty, Spin} from 'antd'
-// import { useSelector } from 'react-redux';
-
-
-// const Notifications = () => {
-//     const id=useSelector(state=>state.user.user.id);
-//      // Extraemos también isLoading para saber cuándo terminó la petición
-//     const { data, isLoading, isError } = useGetNotificationsQuery(id);
-
-//     // 1. Mientras carga, mostramos un spinner
-//     if (isLoading) return <div style={{ textAlign: 'center', padding: '20px' }}><Spin/></div>;
-
-//     // 2. Si hay un error o no hay data 
-//     if (isError || !data) return <Empty description="No hay notificaciones" />;
-
-//     return (
-//         <div>
-//             {data.map(n=><p>{n.message}</p>)}
-//         </div>
-//     )
-// }
-
-// export default Notifications

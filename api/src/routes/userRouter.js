@@ -1,6 +1,7 @@
 const {Router} =require('express');
 const {logIn, signUp, getUsers, editProfile, getUser, changePassword, createAdmin,
-deleteUser}=require('../controllers/usersControllers');
+deleteUser,
+deleteAllUsers}=require('../controllers/usersControllers');
 const {verifyTokenAdmin, verifyTokenUser}=require('../middlewares/authJwt');
 const {subscription}=require('../utils/webPush');
 const Cookies=require('cookie-parser')
@@ -59,14 +60,14 @@ userRouter.post('/signUp',async(req,res)=>{
 })
 
 //ruta post para registrar al admin
-// userRouter.post('/admin',async(req,res)=>{
-//        try {
-//            const user = await createAdmin(req.body)
-//            res.status(200).json(user);
-//        } catch (error) {
-//            res.status(400).json(JSON.parse(error.message))
-//        }
-// })
+userRouter.post('/admin',async(req,res)=>{
+        try {
+            const user = await createAdmin(req.body)
+            res.status(200).json(user);
+        } catch (error) {
+            res.status(400).json(JSON.parse(error.message))
+        }
+ })
 
 //ruta put para editar perfil
 userRouter.put('/edit/:id',verifyTokenUser,async(req,res)=>{
@@ -119,6 +120,15 @@ userRouter.delete('/admin/:id',verifyTokenAdmin,async(req,res)=>{
     }
 })
 
+userRouter.delete('/all',verifyTokenAdmin,async(req,res)=>{
+    try {
+        const deleted=await deleteAllUsers();
+        res.status(200).json(deleted)
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+})
+
 //ruta para que los usuarios puedan eliminar su cuenta
 userRouter.delete('/:id',verifyTokenUser,async(req,res)=>{
     try {
@@ -128,6 +138,7 @@ userRouter.delete('/:id',verifyTokenUser,async(req,res)=>{
         res.status(400).send(error.message)
     }
 })
+
 
 //ruta para recibir la suscripcion a las notificaciones
 userRouter.post('/subscription',async(req,res)=>{

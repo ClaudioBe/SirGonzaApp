@@ -34,16 +34,20 @@ const CreateAppointment = ({ admin, isToEdit = false, appointment= null,isUser=f
     const [errors, setErrors] = useState({});
 
     // Inicialización directa 
-     const [input, setInput] = useState(appointment ? {
-        ...appointment,} 
-        : {
-            name: "",
-            lastname: "",
-            phoneNumber: "",
-            time: "",
-            date_en: "",
-            userId: null
-        });
+    const [input, setInput] = useState(
+        isUser
+            ?{time:"",date_en:"",...appointment}
+            :appointment 
+                ? {...appointment} 
+                : {
+                    name: "",
+                    lastname: "",
+                    phoneNumber: "",
+                    time: "",
+                    date_en: "",
+                    userId: null
+                }
+    );
 
     const timesGenerator = (start, end) => {
         const times = [];

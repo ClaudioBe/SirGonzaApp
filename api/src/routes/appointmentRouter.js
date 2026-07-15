@@ -5,7 +5,8 @@ const{
     putAppointment,
     postAppointment,
     deleteAppointment,
-    deleteOldAppointments
+    deleteOldAppointments,
+    deleteAllAppointments
 } = require('../controllers/appointmentsControllers')
 
 const {verifyTokenAdmin}=require('../middlewares/authJwt');
@@ -36,6 +37,15 @@ appointmentRouter.put('/:id',verifyTokenAdmin,async(req,res)=>{
         res.status(400).send(error.message)
     }
 })
+//primero va esta ruta sino express se confunde al querer pasa all como el id 
+appointmentRouter.delete('/all',verifyTokenAdmin,async(req,res)=>{
+    try {
+        const deleted=await deleteAllAppointments();
+        res.status(201).json(deleted);
+    } catch (error) {
+        res.status(400).end(error.message)
+    }
+})
 
 appointmentRouter.delete('/:id',verifyTokenAdmin,async(req,res)=>{
     try {
@@ -45,6 +55,7 @@ appointmentRouter.delete('/:id',verifyTokenAdmin,async(req,res)=>{
         res.status(400).send(error.message)
     }
 }),
+
 
 appointmentRouter.delete('/',verifyTokenAdmin,async(req,res)=>{
     try {

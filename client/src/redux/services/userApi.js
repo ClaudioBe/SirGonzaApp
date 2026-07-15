@@ -48,6 +48,12 @@ export const userApi = createApi({
                     method:"DELETE",
                 })
             }),
+            deleteAllUsers: builder.mutation({
+                query:()=>({
+                    url:`all`,
+                    method:"DELETE"
+                })
+            }),
             subscription: builder.mutation({
                 query:({PS,id})=>( console.log("redux: "+ PS),{
                     url:'subscription',
@@ -60,4 +66,4 @@ export const userApi = createApi({
 
 export const {
     useGetUsersQuery,useGetUserByIdQuery,useLogInMutation,useLogOutMutation,useSignUpMutation,
-    useDeleteUserForAdminMutation,useDeleteUserMutation,useSubscriptionMutation}=userApi;
+    useDeleteUserForAdminMutation,useDeleteUserMutation,useDeleteAllUsersMutation,useSubscriptionMutation}=userApi;

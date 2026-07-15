@@ -29,7 +29,7 @@ notificationRouter.delete('/:id',verifyTokenUser,async(req,res)=>{
     }
 })
 
-notificationRouter.delete('/:userId',verifyTokenUser,async(req,res)=>{
+notificationRouter.delete('/all/:userId',verifyTokenUser,async(req,res)=>{
     try {
         const deleted=await deleteAllNotifications(req.params.userId);
         res.status(201).json(deleted)

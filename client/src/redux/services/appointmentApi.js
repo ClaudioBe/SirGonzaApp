@@ -34,6 +34,12 @@ export const appointmentApi = createApi({
                     method:"DELETE",
                 })
             }),
+            deleteAllAppointments: builder.mutation({
+                query:()=>({
+                    url:"all",
+                    method:"DELETE"
+                })
+            }),
             deleteOldAppointments:builder.mutation({
                 query:()=>({
                     url:'',
@@ -44,4 +50,4 @@ export const appointmentApi = createApi({
 })
 
 export const {useGetAppointmentsQuery,usePostAppointmentsMutation,
-    useDeleteAppointmentMutation,usePutAppointmentMutation,useDeleteOldAppointmentsMutation}=appointmentApi
+    useDeleteAppointmentMutation,usePutAppointmentMutation,useDeleteAllAppointmentsMutation,useDeleteOldAppointmentsMutation}=appointmentApi

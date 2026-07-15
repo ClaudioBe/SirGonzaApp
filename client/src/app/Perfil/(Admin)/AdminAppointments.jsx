@@ -3,7 +3,7 @@ import React, { useState} from "react";
 import {Table, Tag, Button,Modal } from "antd";
 import styles from '@/ui/AdminAppointments.module.css'
 import CreateAppointment from "@/app/Turnos/page";
-import { useDeleteAppointmentMutation, useDeleteOldAppointmentsMutation, useGetAppointmentsQuery, usePutAppointmentMutation } from "@/redux/services/appointmentApi";
+import { useDeleteAllAppointmentsMutation, useDeleteAppointmentMutation, useDeleteOldAppointmentsMutation, useGetAppointmentsQuery, usePutAppointmentMutation } from "@/redux/services/appointmentApi";
 import { utils , writeFile} from "xlsx";
 import Swal from "sweetalert2";
 
@@ -23,6 +23,7 @@ const AdminAppointments=()=>{
     
     const [deleteOldAppointments]=useDeleteOldAppointmentsMutation();
     const [updateAppointment]=usePutAppointmentMutation();
+    const [deleteAllAppointments]=useDeleteAllAppointmentsMutation();
     const [deleteAppointment]=useDeleteAppointmentMutation();
 
     const handleAccept=(id,userId)=>{   
@@ -80,6 +81,32 @@ const AdminAppointments=()=>{
         })
     }
 
+    const handleDeleteAll=()=>{
+            Swal.fire({
+                title:"¿Estás seguro?",
+                text:"Eliminarás todos los registros de turnos permanentemente",
+                icon:"warning",
+                showCancelButton:true,
+                cancelButtonColor:"red",
+                confirmButtonColor:"green",
+                confirmButtonText:"Sí, eliminar"
+            }).then(async(result)=>{
+                if(result.isConfirmed){
+                    try {
+                        await deleteAllAppointments().unwrap();
+                        refetch()
+                        Swal.fire({
+                            title:"Se han eliminado todos los registros de turnos",
+                            icon:"success",
+                            showCancelButton:false
+                        })
+                    } catch (error) {
+                        console.log("Error al borrar todos los registros de turnos: " + error.data);
+                        
+                    }
+                }
+            })
+    }
     const handleExport=async()=>{
         //filtro los turnos que ya se hayan confirmado
         const appointmentsAccepted=appointments
@@ -135,11 +162,12 @@ const AdminAppointments=()=>{
 
     const columns = [
         {
-            title: "Id",
-            dataIndex: "id",
-            sorter: (a, b) => a.id - b.id,
-            key: "id",
-            render: (text) => <p>{text}</p>,
+            title:"Fecha",
+            dataIndex:"date_es",
+            key:"date_es",
+            sorter:(a,b)=>new Date(a.date_en) - new Date(b.date_en),//para que se pueda ordenar por fecha
+            sortDirections:["ascend","descend","ascend"],//para que cambie con cada click
+            render:(date_es)=><p>{date_es}</p>
         },
         {
             title:"Nombre",
@@ -152,12 +180,6 @@ const AdminAppointments=()=>{
             dataIndex:"lastname",
             key:"lastname",
             render:(text)=><p>{text}</p>
-        },
-        {
-            title:"Fecha",
-            dataIndex:"date_es",
-            key:"date_es",
-            render:(date_es)=><p>{date_es}</p>
         },
         {
             title:"Horario",
@@ -197,9 +219,14 @@ const AdminAppointments=()=>{
     return (
         <div>
             {/* hago el mapeo para ponerle un key a cada appointment para antd*/}
-            <Table columns={columns} dataSource={appointments?.map(h=> ({...h,key:h.id}))} />
+            <Table 
+                columns={columns} 
+                dataSource={appointments?.map(h=> ({...h,key:h.id}))} 
+                scroll={{ x: 2 }} //para que se pueda scrollear en celular, funciona con cualquier numero
+            />
             <Button onClick={()=>setIsModalCreateOpen(true)}>Agendar turno</Button>
             <Button onClick={handleExport}>Descargar excel</Button>
+            <Button onClick={handleDeleteAll} disabled={appointments?.length===0} danger>Eliminar todos</Button>
             <Modal
                 title={null}
                 open={isModalRescheduleOpen}
