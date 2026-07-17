@@ -7,17 +7,18 @@ import CreateAppointment from "../Turnos/page"
 import { useLogOut } from '../hooks/useLogOut';
 import { useSelector } from 'react-redux';
 import { Menu, Modal } from 'antd';
-import { BellOutlined, CalendarOutlined, PoweroffOutlined} from '@ant-design/icons';
+import { BellOutlined, CalendarOutlined, EditOutlined, PoweroffOutlined, } from '@ant-design/icons';
 import Notifications from './(Admin)/Notifications'
+import Register from '../Registrarse/page';
 
 function Profile() {
     const {logout}=useLogOut();
     const [isModalRescheduleOpen, setIsModalRescheduleOpen] = useState(false);
+    const [isModalEditProfileOpen, setIsModalEditProfileOpen] = useState(false);
 
     const router=useRouter()
     //obtengo los datos del usuario guardado en el estado de redux
     const user= useSelector(state=>state.user.user)  
-
     //al renderizar el componente si el usuario es nulo se redirige al inicio despues de retornar null
     useEffect(()=>{if(user==null) router.push('/')},[])
     
@@ -44,6 +45,12 @@ function Profile() {
                     type:'group'
                 }
             ]
+        },
+        {
+            key:"edit",
+            icon: <EditOutlined/>,
+            label:"Editar datos",
+            onClick:()=>setIsModalEditProfileOpen(true)
         },
         {
             key: 'logOut',
@@ -75,6 +82,20 @@ function Profile() {
                         isUser={true}
                         //le paso la funcion para cerrar el modal por prop
                         closeModal={()=>setIsModalRescheduleOpen(false)}
+                    />
+                </Modal>
+                <Modal
+                    title={null}
+                    open={isModalEditProfileOpen}
+                    onCancel={() => setIsModalEditProfileOpen(false)}
+                    footer={null}
+                >
+                    <Register
+                        key={user}//si se hace un cambio se remonta el componente
+                        isToEdit={true}
+                        user={user}
+                        //le paso la funcion para cerrar el modal por prop
+                        closeModal={()=>setIsModalEditProfileOpen(false)}
                     />
                 </Modal>
             </div>

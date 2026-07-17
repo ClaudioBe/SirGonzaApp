@@ -54,7 +54,6 @@ userRouter.post('/signUp',async(req,res)=>{
         const user =await signUp(req.body);
         res.status(200).json(user)
     } catch (error) {
-        //parseo el string a Object para poder manejarlo despues en la action..
         res.status(400).json(error.message);
     }
 })
@@ -73,7 +72,7 @@ userRouter.post('/admin',async(req,res)=>{
 userRouter.put('/edit/:id',verifyTokenUser,async(req,res)=>{
     try {
         const userUpdated=await editProfile(req.body,req.params.id);
-        const{password,admin,...publicUser}=userUpdated;
+        const {password,admin,...publicUser}=userUpdated;
         res.status(200).json(publicUser)
     } catch (error) {
         res.status(400).json(error.message);

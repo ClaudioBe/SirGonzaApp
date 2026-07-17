@@ -54,6 +54,20 @@ export const userApi = createApi({
                     method:"DELETE"
                 })
             }),
+            editProfile: builder.mutation({
+                query:({id,...userUpdate})=>(console.log("user en redux: " + userUpdate.userName), {
+                    url:`edit/${id}`,
+                    method: "PUT",
+                    body:userUpdate
+                })
+            }),
+            changePassword: builder.mutation({
+                query:({passwords,id})=>({
+                    url:`changePassword/${id}`,
+                    method:"PUT",
+                    body:passwords
+                })
+            }),
             subscription: builder.mutation({
                 query:({PS,id})=>( console.log("redux: "+ PS),{
                     url:'subscription',
@@ -66,4 +80,4 @@ export const userApi = createApi({
 
 export const {
     useGetUsersQuery,useGetUserByIdQuery,useLogInMutation,useLogOutMutation,useSignUpMutation,
-    useDeleteUserForAdminMutation,useDeleteUserMutation,useDeleteAllUsersMutation,useSubscriptionMutation}=userApi;
+    useDeleteUserForAdminMutation,useDeleteUserMutation,useDeleteAllUsersMutation,useEditProfileMutation,useChangePasswordMutation, useSubscriptionMutation}=userApi;

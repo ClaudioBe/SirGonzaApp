@@ -117,8 +117,8 @@ const CreateAppointment = ({ admin, isToEdit = false, appointment= null,isUser=f
                     title: admin ? "Turno agendado!" : "Se ha enviado tu solicitud!",
                     icon: 'success',
                 });  
-                
-                setInput({ time: "", date_en: "", name: "", lastname: "", phoneNumber: "" });
+                isUser ? setInput({time:"",date_en:""})
+                       : setInput({ time: "", date_en: "", name: "", lastname: "", phoneNumber: "" });
             }
             if(closeModal) closeModal(); // Cierra el modal de Ant Design si se pasó la función
             setErrors({});
@@ -131,9 +131,7 @@ const CreateAppointment = ({ admin, isToEdit = false, appointment= null,isUser=f
                 timer: 1000,
                 showConfirmButton: false,
                 iconColor: 'red'
-            }); 
-            console.log("Error: " + error.data);
-            
+            });  
         } 
     };
 

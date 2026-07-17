@@ -1,6 +1,7 @@
 const {User}=require('../db');
 const bcrypt=require('bcryptjs');
 const jwt =require('jsonwebtoken');
+const { Op } = require('sequelize');
 
 const regexLetters = RegExp(/^[A-Za-z\s]+$/);
 const secret = process.env.SECRET;
@@ -70,7 +71,7 @@ const signUp=async({name,lastname,phoneNumber,userName,password})=>{
 
     if(phoneNumber.length==0) errors.phoneNumber="Debe ingresar su numero de celular";
     else{
-        if(phoneNumber.length!=8) errors.phoneNumber="El numero debe ser de 8 digitos";
+        if(phoneNumber.length!=8) errors.phoneNumber="El numero debe ser de 8 digitos(sin el 11)";
         else if(await User.findOne({where:{phoneNumber}})!=null) 
             errors.phoneNumber="Este numero ya esta registrado";
     }
@@ -95,36 +96,47 @@ const createAdmin=async({userName,password})=>{
     return "Admin creado";
 }
 
-const editProfile=async(user, id)=>{
+const editProfile=async({name,lastname,phoneNumber,userName,admin}, id)=>{ 
     const errors={};
-    if(user.name!=undefined){
-        if(!regexLetters.test(user.name))errors.name="El nombre solo debe contener letras";
-        if(user.name.length<4)errors.name="Nombre demasiado corto";
-        if(user.name.length>15) errors.name="Nombre demasiado largo";
+    if(name=="") errors.name="Debe ingresar su nombre";
+    else{
+        if(!regexLetters.test(name))errors.name="El nombre solo debe contener letras";
+        if(name.length<4)errors.name="Nombre demasiado corto";
+        if(name.length>15) errors.name="Nombre demasiado largo";
     }
 
-    if(user.lastname!=undefined){
-        if(!regexLetters.test(user.lastname))errors.lastname="El nombre solo debe contener letras";
-        if(user.lastname.length<3)errors.lastname="Nombre demasiado corto";
-        if(user.lastname.length>15) errors.lastname="Nombre demasiado largo";
-    }
-
-    if(user.userName!=undefined){
+    if(lastname=="") errors.lastname="Debe ingresar su apellido";
+    else{
+        if(!regexLetters.test(lastname))errors.lastname="El apellido solo debe contener letras";
+        if(lastname.length<3)errors.lastname="Apellido demasiado corto";
+        if(lastname.length>15) errors.lastname="Apellido demasiado largo";
+    } 
+    
+    if(userName=="") errors.userName="Debe ingresar su nombre de usuario";
+    else{
         if(userName.length<5)errors.userName="Nombre de usuario demasiado corto";
         if(userName.length>15)errors.userName="Nombre de usuario demasiado largo";
+        if(await User.findOne({where:{userName,id:{[Op.ne]:id}}})!=null) //si hay otro usuario registado con este nombre de usuario
+            errors.userName="Este nombre de usuario ya esta registrado";
+    }
+    
+
+    if(phoneNumber.length==0) errors.phoneNumber="Debe ingresar su numero de celular";
+    else{
+        if(phoneNumber.length!=8) errors.phoneNumber="El numero debe ser de 8 digitos(sin el 11)";
+        else if(await User.findOne({where:{phoneNumber,id:{[Op.ne]:id}}})!=null) 
+            errors.phoneNumber="Este numero ya esta registrado";
     }
    
     if(Object.keys(errors).length) throw Error(JSON.stringify(errors));
 
-    console.log(user.admin);
     
     //si alguien quiere hacerse administrador...
-    if(user.admin!=undefined) throw Error(JSON.stringify("No puede hacer eso!!"));
-    const userToUpdate=await User.findByPk(id);
-    
-    //si alguien quiere cambiar su contraseña..
-    if(user.password!=undefined) throw Error(JSON.stringify("No puede hacer eso!!"));
-    return await userToUpdate.update(user);
+    if(admin) throw Error(JSON.stringify("No puede hacer eso!!"));
+
+    await User.update({name,lastname,phoneNumber,userName},{where:{id}});
+    const userUpdated=await User.findByPk(id)
+    return userUpdated.dataValues;
 }
 
 const changePassword= async({oldPassword,newPassword,newPassword2},id)=>{

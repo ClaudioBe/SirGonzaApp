@@ -42,6 +42,13 @@ const userSlice = createSlice({
           state.user = user;
           state.admin = admin;
         }
+      )
+      .addMatcher(
+        userApi.endpoints.editProfile.matchFulfilled,
+        (state, action) => {
+          // Tomo los datos del payload que envió el Back
+          state.user = action.payload;
+        }
       );
   }
 });
