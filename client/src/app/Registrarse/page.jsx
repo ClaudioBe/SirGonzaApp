@@ -6,7 +6,7 @@ import styles from '@/ui/Form.module.css';
 import swal from 'sweetalert2'
 import Swal from 'sweetalert2';
 
-function Register({isToEdit=false, user, closeModal=null}) {
+function Register({isToEdit=false, user=null, closeModal=null}) {
     const[signUp]=useSignUpMutation();
     const[editProfile]=useEditProfileMutation();
 

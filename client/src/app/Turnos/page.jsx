@@ -117,7 +117,7 @@ const CreateAppointment = ({ admin, isToEdit = false, appointment= null,isUser=f
                     title: admin ? "Turno agendado!" : "Se ha enviado tu solicitud!",
                     icon: 'success',
                 });  
-                isUser ? setInput({time:"",date_en:""})
+                isUser ? setInput({...input,time:"",date_en:""})
                        : setInput({ time: "", date_en: "", name: "", lastname: "", phoneNumber: "" });
             }
             if(closeModal) closeModal(); // Cierra el modal de Ant Design si se pasó la función

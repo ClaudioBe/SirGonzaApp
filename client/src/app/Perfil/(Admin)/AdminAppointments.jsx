@@ -231,6 +231,7 @@ const AdminAppointments=()=>{
                 title={null}
                 open={isModalRescheduleOpen}
                 onCancel={() => setIsModalRescheduleOpen(false)}
+                destroyOnHidden={true}
                 footer={null}
             >
                 {selectedAppointment && (
@@ -251,6 +252,7 @@ const AdminAppointments=()=>{
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalCreateOpen}
                 onCancel={()=>setIsModalCreateOpen(false)}
+                destroyOnHidden={true}
                 footer={null}
             >
                 <CreateAppointment admin={true} accept={handleAccept}/>

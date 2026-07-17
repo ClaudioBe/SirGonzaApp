@@ -19,6 +19,7 @@ function Profile() {
     const router=useRouter()
     //obtengo los datos del usuario guardado en el estado de redux
     const user= useSelector(state=>state.user.user)  
+    if(user) {const{pushSubscription, admin, ...userToEdit}=user};
     //al renderizar el componente si el usuario es nulo se redirige al inicio despues de retornar null
     useEffect(()=>{if(user==null) router.push('/')},[])
     
@@ -74,6 +75,7 @@ function Profile() {
                     title={null}
                     open={isModalRescheduleOpen}
                     onCancel={() => setIsModalRescheduleOpen(false)}
+                    destroyOnHidden={true}
                     footer={null}
                 >
                     <CreateAppointment
@@ -88,12 +90,13 @@ function Profile() {
                     title={null}
                     open={isModalEditProfileOpen}
                     onCancel={() => setIsModalEditProfileOpen(false)}
+                    destroyOnHidden={true}
                     footer={null}
                 >
                     <Register
                         key={user}//si se hace un cambio se remonta el componente
                         isToEdit={true}
-                        user={user}
+                        user={userToEdit}
                         //le paso la funcion para cerrar el modal por prop
                         closeModal={()=>setIsModalEditProfileOpen(false)}
                     />

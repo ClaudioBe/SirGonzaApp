@@ -72,7 +72,7 @@ userRouter.post('/admin',async(req,res)=>{
 userRouter.put('/edit/:id',verifyTokenUser,async(req,res)=>{
     try {
         const userUpdated=await editProfile(req.body,req.params.id);
-        const {password,admin,...publicUser}=userUpdated;
+        const {password,...publicUser}=userUpdated;
         res.status(200).json(publicUser)
     } catch (error) {
         res.status(400).json(error.message);
