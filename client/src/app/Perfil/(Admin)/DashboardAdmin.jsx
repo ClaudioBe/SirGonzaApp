@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { BellOutlined, CalendarOutlined, PoweroffOutlined, UserOutlined} from '@ant-design/icons';
 import AdminAppointments from './AdminAppointments';
 import Users from "./Users"
-import Notifications from './Notifications'
+import Notifications from '../(User)/Notifications'
 import { useLogOut } from '@/app/hooks/useLogOut';
 
 const DashboardAdmin = () => {

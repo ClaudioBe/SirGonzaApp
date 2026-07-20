@@ -77,11 +77,9 @@ const signUp=async({name,lastname,phoneNumber,userName,password})=>{
     }
 
     if(password.length==0) errors.password="Debe ingresar una contraseña";
-    else{
-        if(password.length<4) errors.password="Contraseña muy corta";
-        else if(await User.findOne({where:{phoneNumber}})!=null) 
-            errors.phoneNumber="Este numero ya esta registrado";
-    }
+    else if(password.length<4) errors.password="Contraseña muy corta";
+        
+    
 
     //si hay errores lanzo un error con el objeto errors parseado a string para que este quede..
     //en la prop 'message' de errors
@@ -143,15 +141,18 @@ const changePassword= async({oldPassword,newPassword,newPassword2},id)=>{
     const errors={};
     const userToUpdate=await User.findByPk(id);
     if(oldPassword=="") errors.oldPassword="Debe ingresar su antigua contraseña";
-    if(newPassword=="") errors.newPassword="Debe ingresar su nueva contraseña";
-    if(newPassword2=="") errors.newPassword2="Debe ingresar su nueva contraseña otra vez";
-    if(newPassword!=newPassword2) errors.newPassword2="No ha ingresado la misma contraseña";
-
-    if(!await comparePassword(oldPassword,userToUpdate.password))
+    else if(!await comparePassword(oldPassword,userToUpdate.password))
         errors.oldPassword="Contraseña antigua incorrecta";
-        
-    if(newPassword==newPassword2 && newPassword==oldPassword)
-        errors.newPassword="Ingreso la antigua contraseña"
+
+    if(newPassword=="") errors.newPassword="Debe ingresar su nueva contraseña";
+    else if(newPassword.length<4) errors.newPassword="Contraseña muy corta";
+    if(newPassword2=="") errors.newPassword2="Debe ingresar su nueva contraseña otra vez";
+    else if(newPassword!=newPassword2) errors.newPassword2="No ha ingresado la misma contraseña";
+
+    else if(newPassword==newPassword2 && newPassword==oldPassword)
+        errors.newPassword="Debe ingresar una nueva contraseña"
+
+
     if(Object.keys(errors).length) throw Error(JSON.stringify(errors));
     //finalmente, si no hay errores, actualizo la contraseña del usuario a 
     //la ingresada guardandola encriptada en la BBDD... 

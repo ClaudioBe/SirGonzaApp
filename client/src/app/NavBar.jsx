@@ -20,7 +20,7 @@ const NavBar=()=>{
                 </Link>
 
                 <Link className={`nav-link ${styles.link}`} href='/IniciarSesion'>
-                    <p className="text-success">Iniciar Sesion</p>
+                    <p className="text-success">Iniciar Sesión</p>
                 </Link>
             </div>
         </nav>

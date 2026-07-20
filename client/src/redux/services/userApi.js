@@ -55,14 +55,15 @@ export const userApi = createApi({
                 })
             }),
             editProfile: builder.mutation({
-                query:({id,...userUpdate})=>(console.log("user en redux: " + userUpdate.userName), {
+                query:({id,...userUpdate})=>({
                     url:`edit/${id}`,
                     method: "PUT",
                     body:userUpdate
                 })
             }),
             changePassword: builder.mutation({
-                query:({passwords,id})=>({
+                query:({id,...passwords})=>(console.log("passwords redux: " + passwords),
+                {
                     url:`changePassword/${id}`,
                     method:"PUT",
                     body:passwords

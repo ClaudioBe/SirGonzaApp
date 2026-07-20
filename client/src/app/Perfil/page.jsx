@@ -7,19 +7,21 @@ import CreateAppointment from "../Turnos/page"
 import { useLogOut } from '../hooks/useLogOut';
 import { useSelector } from 'react-redux';
 import { Menu, Modal } from 'antd';
-import { BellOutlined, CalendarOutlined, EditOutlined, PoweroffOutlined, } from '@ant-design/icons';
-import Notifications from './(Admin)/Notifications'
+import { BellOutlined, CalendarOutlined, EditOutlined, LockOutlined, PoweroffOutlined } from '@ant-design/icons';
+import Notifications from './(User)/Notifications'
 import Register from '../Registrarse/page';
+import ChangePassword from './(User)/ChangePassword';
 
 function Profile() {
     const {logout}=useLogOut();
-    const [isModalRescheduleOpen, setIsModalRescheduleOpen] = useState(false);
+    const [isModalReqAppointmentOpen, setIsModalReqAppointmentOpen] = useState(false);
     const [isModalEditProfileOpen, setIsModalEditProfileOpen] = useState(false);
+    const [isModalChangePasswordOpen, setIsModalChangePasswordOpen]=useState(false)
 
     const router=useRouter()
     //obtengo los datos del usuario guardado en el estado de redux
     const user= useSelector(state=>state.user.user)  
-    if(user) {const{pushSubscription, admin, ...userToEdit}=user};
+    if(user) {var {pushSubscription, admin, ...userToEdit}=user};
     //al renderizar el componente si el usuario es nulo se redirige al inicio despues de retornar null
     useEffect(()=>{if(user==null) router.push('/')},[])
     
@@ -29,7 +31,7 @@ function Profile() {
             key:'appointment',
             icon:<CalendarOutlined/>,
             label:"Solicitar turno",
-            onClick:()=>setIsModalRescheduleOpen(true)
+            onClick:()=>setIsModalReqAppointmentOpen(true)
         }, 
         {
             key:'notifications_submenu',
@@ -54,12 +56,19 @@ function Profile() {
             onClick:()=>setIsModalEditProfileOpen(true)
         },
         {
+            key:"changePassword",
+            icon:<LockOutlined/>,
+            label:"Cambiar Contraseña",
+            onClick:()=>setIsModalChangePasswordOpen(true)
+            
+        },
+        {
             key: 'logOut',
             icon: <PoweroffOutlined />,
             label: 'Cerrar Sesion',
             danger: true,
             onClick: () => logout(),
-        },
+        }
     ];
     if(user==null) return null;
 
@@ -73,8 +82,8 @@ function Profile() {
                 />
                 <Modal
                     title={null}
-                    open={isModalRescheduleOpen}
-                    onCancel={() => setIsModalRescheduleOpen(false)}
+                    open={isModalReqAppointmentOpen}
+                    onCancel={() => setIsModalReqAppointmentOpen(false)}
                     destroyOnHidden={true}
                     footer={null}
                 >
@@ -83,7 +92,7 @@ function Profile() {
                         appointment={{userId:user.id,...user}}
                         isUser={true}
                         //le paso la funcion para cerrar el modal por prop
-                        closeModal={()=>setIsModalRescheduleOpen(false)}
+                        closeModal={()=>setIsModalReqAppointmentOpen(false)}
                     />
                 </Modal>
                 <Modal
@@ -99,6 +108,18 @@ function Profile() {
                         user={userToEdit}
                         //le paso la funcion para cerrar el modal por prop
                         closeModal={()=>setIsModalEditProfileOpen(false)}
+                    />
+                </Modal>
+                <Modal
+                    title={null}
+                    open={isModalChangePasswordOpen}
+                    onCancel={() => setIsModalChangePasswordOpen(false)}
+                    destroyOnHidden={true}
+                    footer={null}
+                >
+                    <ChangePassword
+                        id={user.id}
+                        closeModal={()=>setIsModalChangePasswordOpen(false)}
                     />
                 </Modal>
             </div>

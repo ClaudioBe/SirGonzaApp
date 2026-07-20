@@ -28,7 +28,7 @@ const postAppointment=async({name,lastname,phoneNumber,time,date_en,userId})=>{
 
     if(phoneNumber=="") errors.phoneNumber="Debe ingresar su numero de celular";
     else {
-        if(phoneNumber.length!=8) errors.phoneNumber="Debe ingresar 6 digitos";
+        if(phoneNumber.length!=8) errors.phoneNumber="El numero debe ser de 8 digitos(sin el 11)";
         if(!regexNumbers.test(phoneNumber)) errors.phoneNumber="Debe ingresar solo numeros"
     }
 

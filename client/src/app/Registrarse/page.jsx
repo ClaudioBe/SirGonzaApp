@@ -33,9 +33,6 @@ function Register({isToEdit=false, user=null, closeModal=null}) {
         e.preventDefault();
         //despacho la action para registrarse  
         //si hay errores los guardo en el estado local
-        console.log("user: "  + JSON.stringify(user));
-        console.log("input: "  + JSON.stringify(input));
-        
         if(JSON.stringify(user)===JSON.stringify(input)) 
             Swal.fire({
                 title:"No ha hecho ningún cambio",
@@ -46,7 +43,7 @@ function Register({isToEdit=false, user=null, closeModal=null}) {
         else{
             try {  
                 //uso await para que espere a que se resuelva la promesa...
-                if(isToEdit)await editProfile(input, user.id).unwrap() 
+                if(isToEdit)await editProfile(input).unwrap() 
                 else{
                     await signUp(input).unwrap(),
                     router.push("/IniciarSesion")
