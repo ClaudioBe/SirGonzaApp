@@ -15,6 +15,7 @@
     "bootstrap": "^5.3.7",
     "js-cookie": "^3.0.5",
     "next": "15.4.7",
+    "nextjs-toploader": "^3.9.17",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-redux": "^9.2.0",

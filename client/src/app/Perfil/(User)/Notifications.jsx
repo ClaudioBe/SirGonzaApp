@@ -10,8 +10,8 @@ const Notifications=()=>{
     const[deleteNotification]=useDeleteNotificationMutation()
     const[deleteAllNotification]=useDeleteAllNotificationsMutation()
     const{data,isLoading,isError,refetch}=useGetNotificationsQuery(id);
-    // 1. Mientras carga, mostramos un spinner
-    if (isLoading) return <div style={{ textAlign: 'center', padding: '20px' }}><Spin/></div>;
+    //Mientras carga se muestra un spinner
+    if (isLoading) return <div style={{ textAlign: 'center', padding: '20px' }}><Spin color="#1eca00"/></div>;
 
     //Si hay un error o no hay data 
     if (isError || !data) return <Empty description="No hay notificaciones" />;

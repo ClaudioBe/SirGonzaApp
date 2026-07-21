@@ -105,7 +105,8 @@
 }
 
 
-.form button{
+.form button,
+.form a{
     background-color:#6e6e6e;
     border:none;
     padding:1rem;
@@ -114,9 +115,11 @@
     font-size:1rem;
     cursor:pointer;
     transition:0.2s;
+    text-align: center;
 }
 
-.form button:hover{
+.form button:hover,
+.form a:hover{
     background-color:#8a8a8a;
 }
 

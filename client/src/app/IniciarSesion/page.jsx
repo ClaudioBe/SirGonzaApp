@@ -4,6 +4,7 @@ import { useLogInMutation ,useSubscriptionMutation} from "@/redux/services/userA
 import styles from "@/ui/Form.module.css";
 import { useRouter } from 'next/navigation';
 import swal from "sweetalert2";
+import Link from "next/link";
 const PUBLIC_VAPID_KEY='BLi0bbWUXw3MjOQayCJ7T1_NhkSL-ypZ3R_GoTVQZM9Azs2Wex9m3abZ9HDRGMOahe02VlJgWAwbiXjpSrzm9zI'
 
 //para convertir el PUBLIC_VAPID_KEY de string a Uint8Array
@@ -78,7 +79,7 @@ const LogIn=()=>{
     return (
         <div className={styles.container}>
            <form className={styles.form} onSubmit={handleSubmit}>
-                <h1>Iniciar Sesion</h1>
+                <h1>Iniciar Sesión</h1>
                 <div>
                     <label>Nombre de usuario</label>
                     <input type="text" name="userName" onChange={handleChange}/>
@@ -92,7 +93,10 @@ const LogIn=()=>{
                 <p>{errors.password}</p>
                 
                 <button type="submit">Ingresar</button>
-                <button type="button" onClick={()=>router.push("/Registrarse")}>Registrarse</button>
+                <Link href="/Registrarse">
+                    Registrarse
+                </Link>
+                
             </form> 
         </div>    
     )

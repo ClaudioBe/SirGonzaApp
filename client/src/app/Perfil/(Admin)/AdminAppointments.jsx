@@ -1,6 +1,6 @@
 "use client"
 import React, { useState} from "react";
-import {Table, Tag, Button,Modal } from "antd";
+import {Table, Tag, Button,Modal, Spin } from "antd";
 import styles from '@/ui/AdminAppointments.module.css'
 import CreateAppointment from "@/app/Turnos/page";
 import { useDeleteAllAppointmentsMutation, useDeleteAppointmentMutation, useDeleteOldAppointmentsMutation, useGetAppointmentsQuery, usePutAppointmentMutation } from "@/redux/services/appointmentApi";
@@ -13,18 +13,22 @@ const AdminAppointments=()=>{
     //estado local para guardar el usuario al reprogramar
     const [selectedAppointment, setSelectedAppointment] = useState(null);
 
+    const [deleteOldAppointments]=useDeleteOldAppointmentsMutation();
+    const [updateAppointment]=usePutAppointmentMutation();
+    const [deleteAllAppointments]=useDeleteAllAppointmentsMutation();
+    const [deleteAppointment]=useDeleteAppointmentMutation();
+
     const openReschedule = (appointment) => {
         setSelectedAppointment(appointment);
         setIsModalRescheduleOpen(true);
     };
 
     const{data:appointments,isLoading,refetch}=useGetAppointmentsQuery();
-    console.log("turnos" + appointments);
     
-    const [deleteOldAppointments]=useDeleteOldAppointmentsMutation();
-    const [updateAppointment]=usePutAppointmentMutation();
-    const [deleteAllAppointments]=useDeleteAllAppointmentsMutation();
-    const [deleteAppointment]=useDeleteAppointmentMutation();
+    //Mientras carga se muestra un spinner
+    if (isLoading) return <div style={{ textAlign: 'center', padding: '20px' }}><Spin color="#1eca00"/></div>;
+    
+    
 
     const handleAccept=(id,userId)=>{   
         Swal.fire({
@@ -117,28 +121,32 @@ const AdminAppointments=()=>{
                                         Apellido:a.lastname,
                                         Fecha: a.date_es,
                                         Hora:a.time,
-                                        Numero_tel: a.phoneNumber
+                                        Numero_cel: a.phoneNumber
                                     }})
-        //instancio un objeto de tipo Date
-        //lo paso a un formato mas simple y lo separo 
-        //para tomar solamente la fecha(año-mes-diaTHora)
-        const today=new Date().toISOString().split('T')[0];
+        if(appointmentsAccepted.length){
+            //instancio un objeto de tipo Date
+            //lo paso a un formato mas simple y lo separo 
+            //para tomar solamente la fecha(año-mes-diaTHora)
+            const today=new Date().toISOString().split('T')[0];
         
-        const wb = utils.book_new();
-        const ws = utils.json_to_sheet(appointmentsAccepted);
+            const wb = utils.book_new();//crea archivo de excell en blanco
+            //transforma arreglo de obj en cuadricula con formato de excell
+            const ws = utils.json_to_sheet(appointmentsAccepted);
 
-        utils.book_append_sheet(wb,ws,today)
+            //agrego los datos al excell en blanco y le asigno nombre
+            utils.book_append_sheet(wb,ws,today)
 
-        writeFile(wb, `${today}.xlsx`)
+            //genera el archivo y permite la descarga al usuario
+            writeFile(wb, `${today}.xlsx`)
 
-        Swal.fire({
-            title:"¿Desea eliminar los turnos antiguos?",
-            text:"Se eliminarán los turnos de hace 30 días o más",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "green",
-            cancelButtonColor: "red",
-            confirmButtonText: "Sí, eliminar"
+            Swal.fire({
+                title:"¿Desea eliminar los turnos antiguos?",
+                text:"Se eliminarán los turnos de hace 30 días o más",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "green",
+                cancelButtonColor: "red",
+                confirmButtonText: "Sí, eliminar"
             }).then(async(result)=>{
                 if(result.isConfirmed){
                     try {
@@ -158,6 +166,16 @@ const AdminAppointments=()=>{
                         } 
                     }
             })
+        }
+        else{
+            Swal.fire({
+                title:"No hay ningún turno aceptado!",
+                icon:"error"
+            })
+        }
+        
+
+        
     }
 
     const columns = [

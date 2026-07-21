@@ -4,14 +4,16 @@ import { Layout, Typography, Row, Col, Space } from "antd";
 import { InstagramOutlined, WhatsAppOutlined, EnvironmentOutlined, LinkedinOutlined, GithubOutlined } from "@ant-design/icons";
 import styles from "@/ui/Footer.module.css"; // Asegurá la ruta correcta a tu archivo CSS
 import { useSelector } from "react-redux";
+import { usePathname } from "next/navigation";
 
 const { Title, Paragraph, Text } = Typography;
 
 export default function Footer() {
+    const pathname=usePathname();
 
-    const user=useSelector(state=>state.user.user);
+    const admin=useSelector(state=>state.user.admin);
    
-    if(user)return null;
+    if(pathname==="/Perfil" && admin)return null;
     return (
         <Layout.Footer className={styles.footer}>
             <Row gutter={[24, 24]} justify="space-between" align="top">

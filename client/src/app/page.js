@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 
 import {
@@ -25,7 +25,6 @@ const { Content } = Layout;
 const { Title, Paragraph } = Typography;
 
 const Home = () => {
-    const router = useRouter();
     return (
         <Layout className={styles.layout}>
             <Content className={styles.content}>
@@ -58,14 +57,15 @@ const Home = () => {
                             Solicitá un turno de forma rápida y sencilla.
                         </Paragraph>
                     </Space>
-
-                    <Button
-                        size="large"
-                        className={styles.button}
-                        onClick={() => router.push("/Turnos")}
-                    >
-                        SACAR TURNO
-                    </Button>
+                    <Link href="/Turnos">
+                        <Button
+                            size="large"
+                            className={styles.button}
+                        >
+                            SACAR TURNO
+                        </Button>
+                    </Link>
+                    
 
                 </Flex>
 
@@ -79,14 +79,15 @@ const Home = () => {
                     <Title level={3} className={styles.subtitle}>
                         ¿Todavía no tenés cuenta?
                     </Title>
-
-                    <Button
-                        size="large"
-                        className={styles.button}
-                        onClick={() => router.push("/Registrarse")}
-                    >
-                        REGISTRATE
-                    </Button>
+                    <Link href="/Registrarse">
+                        <Button
+                            size="large"
+                            className={styles.button}
+                        >
+                            REGISTRATE
+                        </Button>
+                    </Link>
+                    
                     <Title level={3} className={styles.subtitle}>
                         Y accedé a los siguientes beneficios:
                     </Title>

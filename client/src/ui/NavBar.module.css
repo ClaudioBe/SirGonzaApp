@@ -12,5 +12,6 @@
 }
 
 .img{
-    height:2em
+    height:2em;
+    border-radius: 50%;
 }

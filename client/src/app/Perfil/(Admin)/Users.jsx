@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Table, Tag } from "antd";
+import {Button, Spin, Table, Tag } from "antd";
 import { useGetUsersQuery,useDeleteUserForAdminMutation, useDeleteAllUsersMutation } from "@/redux/services/userApi";
 import styles from '@/ui/Users.module.css';
 import Swal from "sweetalert2";
@@ -9,6 +9,9 @@ const Users=()=>{
     const{data:users,isLoading,refetch}=useGetUsersQuery();
     const [deleteAllUsers]=useDeleteAllUsersMutation();
     
+    //Mientras carga se muestra un spinner
+    if (isLoading) return <div style={{ textAlign: 'center', padding: '20px' }}><Spin color="#1eca00"/></div>;
+
     const Users=users?.map(u=> ({...u,key:u.id}));
 
     const handleDelete=(id)=>{de

@@ -1,18 +1,18 @@
 "use client"
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link"
-import { useSelector } from "react-redux";
 import styles from '@/ui/NavBar.module.css'
+import { usePathname } from "next/navigation";
 
 const NavBar=()=>{
-    const user=useSelector(state=>state.user.user);
-   
-    if(user)return null;
+    const pathname= usePathname();
+
+    if(pathname==="/Perfil")return null;
     return ( 
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container">
                 <Link className={`nav-link ${styles.link}`} href='/Turnos'>
-                    <p className="text-success">Sacar Turno</p>
+                    <p className="text-success">Solicitar Turno</p>
                 </Link>
 
                 <Link href='/'>
